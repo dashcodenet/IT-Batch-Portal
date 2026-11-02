@@ -67,6 +67,26 @@ frontend/
 
 
 
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git config --global user.name "dashcodenet"
 
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git config --global user.email "dashcode.net@gmail.com"
 
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git add .
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git commit -m "Initial commit"
+[main 513cc59] Initial commit
+ 3 files changed, 98 insertions(+), 179 deletions(-)
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git push
+Enumerating objects: 17, done.
+Counting objects: 100% (17/17), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (9/9), 2.83 KiB | 362.00 KiB/s, done.
+Total 9 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To https://github.com/dashcodenet/IT-Batch-Portal.git
+   6114c58..513cc59  main -> main
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>
 

@@ -1,0 +1,89 @@
+{
+  "nav": {
+    "home": "Home",
+    "materials": "Materials",
+    "news": "News",
+    "announcements": "Announcements",
+    "services": "Our Services",
+    "schedule": "Schedule",
+    "about": "About Us"
+  },
+  "hero": {
+    "title": "IT Batch Portal",
+    "subtitle": "Everything you need for your academic journey, in one place",
+    "btn_materials": "Enter the Archive",
+    "btn_services": "Our Services"
+  },
+  "home": {
+    "choose_year": "Choose Your Year",
+    "view_all": "View All →",
+    "click_view": "Click to view",
+    "enter": "Enter"
+  },
+  "materials": {
+    "title": "Subjects",
+    "term_1": "Term 1",
+    "term_2": "Term 2"
+  },
+  "files": {
+    "title": "Files",
+    "search_placeholder": "Search files...",
+    "no_results": "No results found"
+  },
+  "news": {
+    "title": "News"
+  },
+  "announcements": {
+    "title": "Announcements"
+  },
+  "schedule": {
+    "title": "Schedule",
+    "year": "Year",
+    "term": "Term",
+    "day": "Day",
+    "lectures": "Lectures & Labs",
+    "no_schedule": "Schedule Not Available",
+    "no_schedule_desc": "No schedule uploaded for this term yet."
+  },
+  "about": {
+    "title": "Dash Code Success Story",
+    "subtitle": "How a simple idea turned into a complete academic portal serving IT students.",
+    "why_title": "Why we built it?",
+    "why_desc": "We all suffered as students from the 'digital chaos' in WhatsApp and Telegram groups, where lectures and files get lost under thousands of messages. We wanted to create one organized, fast, and elegant place that gathers everything an academic student needs.",
+    "how_title": "How we developed it?",
+    "how_desc": "The Dash Code team used the latest cloud technologies (Serverless). We relied on Google Drive as file storage, Apps Script as a backend, and Netlify for frontend hosting. This made the site operate at zero cost and lightning speed!",
+    "team_title": "Our Team",
+    "team_subtitle": "The minds that stayed up late to bring this platform to light",
+    "role_lead": "Team Lead & Frontend Developer",
+    "role_backend": "Backend Engineer",
+    "role_design": "UI/UX Designer"
+  },
+  "services_page": {
+    "title": "Our Services",
+    "subtitle": "Everything you need for your academic journey in one platform, designed for you.",
+    "archive_title": "Comprehensive Archive",
+    "archive_desc": "Browse and download lectures, summaries, and past exams with ease.",
+    "schedule_title": "Interactive Schedule",
+    "schedule_desc": "Follow your weekly study schedule in an organized, clear, and eye-friendly way.",
+    "news_title": "News & Announcements",
+    "news_desc": "Stay updated with the latest academic news and announcements.",
+    "announcements_title": "Notice Board",
+    "announcements_desc": "Important and pinned announcements from the batch management in one place so you don't miss a thing."
+  },
+  "footer": {
+    "desc_main": "An academic portal for the IT batch. Designed to facilitate access to scientific content and organize files in one place.",
+    "made_with_love": "Made with effort and passion ❤️",
+    "desc_personal": "This platform was developed with love to serve our students. If you face any issues or have suggestions to improve the site, don't hesitate to contact us.",
+    "suggestions_welcome": "We always welcome your ideas!",
+    "contact_us": "Contact Us",
+    "all_rights_reserved": "All rights reserved."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "empty": "No files here yet",
+    "preview": "Preview",
+    "download": "Download",
+    "pinned": "Pinned"
+  }
+}

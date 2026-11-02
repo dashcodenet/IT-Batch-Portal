@@ -1,0 +1,79 @@
+/* ==========================================================================
+   Variables - Design Tokens (Colors, Fonts, Spacing, Shadows)
+   Based on the provided UI/UX mockup.
+   ========================================================================== */
+
+:root {
+    /* Fonts */
+    --font-ar: 'Cairo', sans-serif;
+    --font-en: 'Inter', sans-serif;
+    
+    /* Layout */
+    --container-max-width: 1280px;
+    --header-height: 72px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-8: 48px;
+    --space-10: 64px;
+
+    /* Light Theme Colors (Exact match from image) */
+    --color-primary: #1E40AF;
+    --color-primary-hover: #1E3A8A;
+    --color-secondary: #0EA5E9;
+    --color-accent: #10B981;
+    --color-gold: #EAB308;
+    --color-danger: #DC2626;
+
+    --color-bg: #F8FAFC;
+    --color-surface: #FFFFFF;
+    --color-surface-glass: rgba(255, 255, 255, 0.72);
+    --color-border: #E2E8F0;
+    --color-border-strong: #CBD5E1;
+
+    --color-text: #0F172A;
+    --color-text-muted: #64748B;
+    --color-text-invert: #FFFFFF;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,.12);
+    --shadow-glow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Theme Colors (Exact match from image) */
+html.dark {
+    --color-primary: #3B82F6;
+    --color-primary-hover: #60A5FA;
+    --color-secondary: #38BDF8;
+    --color-accent: #34D399;
+    --color-gold: #FACC15;
+    --color-danger: #EF4444;
+
+    --color-bg: #0F172A;
+    --color-surface: #1E293B;
+    --color-surface-glass: rgba(30, 41, 59, 0.65);
+    --color-border: #334155;
+    --color-border-strong: #475569;
+
+    --color-text: #F1F5F9;
+    --color-text-muted: #94A3B8;
+    --color-text-invert: #0F172A;
+
+    --shadow-glow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+}

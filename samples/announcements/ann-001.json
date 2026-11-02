@@ -1,0 +1,14 @@
+{
+  "id": "ann-001",
+  "date": "2026-10-22",
+  "pinned": true,
+  "level": "high",
+  "title": {
+    "ar": "تغيير موعد محاضرة الشبكات",
+    "en": "Networks Lecture Rescheduled"
+  },
+  "body": {
+    "ar": "تم نقل محاضرة الشبكات إلى القاعة B2 يوم الثلاثاء القادم بدلاً من الاثنين.",
+    "en": "The Networks lecture has been moved to Hall B2 next Tuesday instead of Monday."
+  }
+}

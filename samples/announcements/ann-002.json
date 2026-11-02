@@ -1,0 +1,14 @@
+{
+  "id": "ann-002",
+  "date": "2026-10-18",
+  "pinned": false,
+  "level": "medium",
+  "title": {
+    "ar": "تذكير بموعد تسليم المشروع",
+    "en": "Project Submission Reminder"
+  },
+  "body": {
+    "ar": "آخر موعد لتسليم مشروع البرمجة هو الخميس 30 أكتوبر.",
+    "en": "The deadline for the Programming project is Thursday, October 30."
+  }
+}

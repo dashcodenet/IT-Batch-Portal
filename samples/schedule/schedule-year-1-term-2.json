@@ -1,0 +1,51 @@
+{
+  "year": 1,
+  "term": 1,
+  "days": [
+    {
+      "name": { "ar": "الأحد", "en": "Sunday" },
+      "slots": [
+        {
+          "time": "08:00-09:30",
+          "subject": { "ar": "الشبكات", "en": "Networks" },
+          "hall": "A1",
+          "type": "lecture"
+        },
+        {
+          "time": "10:00-11:30",
+          "subject": { "ar": "البرمجة", "en": "Programming" },
+          "hall": "Lab-2",
+          "type": "lab"
+        }
+      ]
+    },
+    {
+      "name": { "ar": "الاثنين", "en": "Monday" },
+      "slots": [
+        {
+          "time": "08:00-09:30",
+          "subject": { "ar": "الرياضيات", "en": "Mathematics" },
+          "hall": "B1",
+          "type": "lecture"
+        }
+      ]
+    },
+    {
+      "name": { "ar": "الثلاثاء", "en": "Tuesday" },
+      "slots": [
+        {
+          "time": "10:00-11:30",
+          "subject": { "ar": "الفيزياء", "en": "Physics" },
+          "hall": "C3",
+          "type": "lecture"
+        },
+        {
+          "time": "12:00-13:30",
+          "subject": { "ar": "الشبكات", "en": "Networks" },
+          "hall": "Lab-1",
+          "type": "lab"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خدماتنا | IT Batch Portal</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1E40AF">
+    
+    <!-- Fonts (Local) -->
+    <link rel="stylesheet" href="css/fonts.css">
+    
+    <!-- Icons (Local) -->
+    <script src="js/lucide.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body class="lang-ar">
+
+    <!-- الهيدر سيتم حقنه تلقائياً عبر layout.js -->
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <section class="services-header">
+            <h1 data-i18n="services_page.title">خدماتنا</h1>
+            <p data-i18n="services_page.subtitle" style="color: var(--color-text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+                كل ما تحتاجه لرحلتك الأكاديمية في منصة واحدة، صُممت لخدمتك.
+            </p>
+        </section>
+
+        <section class="services-grid">
+            <!-- الخدمة الأولى -->
+            <a href="materials.html" class="service-card">
+                <div class="service-icon"><i data-lucide="archive"></i></div>
+                <h3 data-i18n="services_page.archive_title">الأرشيف الشامل</h3>
+                <p data-i18n="services_page.archive_desc">تصفح وحمل المحاضرات، الملخصات، والامتحانات السابقة بسهولة تامة.</p>
+            </a>
+
+            <!-- الخدمة الثانية -->
+            <a href="schedule.html" class="service-card">
+                <div class="service-icon"><i data-lucide="calendar-days"></i></div>
+                <h3 data-i18n="services_page.schedule_title">الجدول التفاعلي</h3>
+                <p data-i18n="services_page.schedule_desc">تابع جدولك الدراسي الأسبوعي بشكل منظم، واضح، ومريح للعين.</p>
+            </a>
+
+            <!-- الخدمة الثالثة -->
+            <a href="news.html" class="service-card">
+                <div class="service-icon"><i data-lucide="newspaper"></i></div>
+                <h3 data-i18n="services_page.news_title">الأخبار والتعميمات</h3>
+                <p data-i18n="services_page.news_desc">كن دائماً على اطلاع بآخر المستجدات والإعلانات الأكاديمية أولاً بأول.</p>
+            </a>
+
+            <!-- الخدمة الرابعة -->
+            <a href="announcements.html" class="service-card">
+                <div class="service-icon"><i data-lucide="bell"></i></div>
+                <h3 data-i18n="services_page.announcements_title">لوحة الإعلانات</h3>
+                <p data-i18n="services_page.announcements_desc">إعلانات هامة ومثبتة من إدارة الدفعة في مكان واحد لضمان عدم تفويتك لأي شيء.</p>
+            </a>
+        </section>
+
+    </main>
+
+    <!-- الفوتر والقائمة الجانبية سيتم حقنهم تلقائياً عبر layout.js -->
+
+    <!-- JS Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/cache.js"></script>
+    <script src="js/error-handler.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/lang-switcher.js"></script>
+    <script src="js/theme-toggle.js"></script>
+    
+    <!-- استدعاء ملف التصميم الموحد (يحقن الهيدر والفوتر) -->
+    <script src="js/layout.js"></script>
+    
+    <!-- UI Script (ضروري لعمل القائمة الجانبية) -->
+    <script src="js/ui.js"></script>
+    
+    <script src="js/pwa.js"></script>
+    
+    <!-- سكربت التهيئة الخاص بهذه الصفحة (لأنه لا يوجد ملف services.js) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            ErrorHandler.init();
+            await I18n.init();
+            ThemeManager.init();
+            LangSwitcher.init();
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

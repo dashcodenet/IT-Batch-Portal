@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإعلانات | IT Batch Portal</title>
+    
+    <!-- Fonts (Local) -->
+    <link rel="stylesheet" href="css/fonts.css">
+    
+    <!-- Icons (Local) -->
+    <script src="js/lucide.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body class="lang-ar">
+
+    <!-- الهيدر سيتم حقنه تلقائياً عبر layout.js -->
+
+    <main class="container" style="padding-top: var(--space-6); min-height: 80vh;">
+        <h1 class="section-title">
+            <i data-lucide="megaphone"></i> 
+            <span data-i18n="announcements.title">الإعلانات</span>
+        </h1>
+        <div id="announcements-grid" class="grid-3">
+            <!-- Rendered by JS -->
+        </div>
+    </main>
+
+    <!-- الفوتر والقائمة الجانبية سيتم حقنهم تلقائياً عبر layout.js -->
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/cache.js"></script>
+    <script src="js/error-handler.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/lang-switcher.js"></script>
+    <script src="js/theme-toggle.js"></script>
+    
+    <!-- استدعاء ملف التصميم الموحد (يحقن الهيدر والفوتر) -->
+    <script src="js/layout.js"></script>
+    
+    <!-- UI Script (ضروري لعمل القائمة الجانبية) -->
+    <script src="js/ui.js"></script>
+    
+    <!-- Page Specific -->
+    <script src="js/announcements.js"></script>
+    <script src="js/pwa.js"></script>
+</body>
+</html>

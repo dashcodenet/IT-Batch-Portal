@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عن الموقع | IT Batch Portal</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1E40AF">
+    
+    <!-- Fonts (Local) -->
+    <link rel="stylesheet" href="css/fonts.css">
+    
+    <!-- Icons (Local) -->
+    <script src="js/lucide.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body class="lang-ar">
+
+    <!-- الهيدر سيتم حقنه تلقائياً عبر layout.js -->
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- About Header -->
+        <section class="about-header">
+            <h1 data-i18n="about.title">قصة نجاح Dash Code</h1>
+            <p data-i18n="about.subtitle" style="color: var(--color-text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+                كيف تحولت فكرة بسيطة إلى بوابة أكاديمية متكاملة تخدم طلاب تكنولوجيا المعلومات.
+            </p>
+        </section>
+
+        <!-- Story Section -->
+        <section class="story-grid">
+            <div class="story-card">
+                <h3><i data-lucide="help-circle" style="color: var(--color-primary);"></i> <span data-i18n="about.why_title">لماذا بنينا الموقع؟</span></h3>
+                <p data-i18n="about.why_desc">
+                    عانينا جميعاً كطلاب من "الفوضى الرقمية" في مجموعات الواتساب والتليجرام، حيث تضيع المحاضرات والملفات تحت آلاف الرسائل. أردنا خلق مكان واحد منظم، سريع، وأنيق يجمع كل ما يحتاجه الطالب الأكاديمي.
+                </p>
+            </div>
+
+            <div class="story-card">
+                <h3><i data-lucide="code" style="color: var(--color-secondary);"></i> <span data-i18n="about.how_title">كيف طورناه؟</span></h3>
+                <p data-i18n="about.how_desc">
+                    استخدم فريق Dash Code أحدث التقنيات السحابية (Serverless). اعتمدنا على Google Drive كمخزن للملفات، وApps Script كمحرك خلفي، وNetlify لاستضافة الواجهة. هذا جعل الموقع يعمل بتكلفة صفرية وبسرعة فائقة!
+                </p>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="team-section">
+            <h2 class="section-title" style="justify-content: center; margin-bottom: 0;" data-i18n="about.team_title">فريق العمل</h2>
+            <p style="color: var(--color-text-muted);" data-i18n="about.team_subtitle">العقول التي سهرت ليلاً لتخرج هذه المنصة للنور</p>
+            
+            <div class="team-grid">
+                <!-- عضو الفريق الأول -->
+                <div class="team-card">
+                    <div class="team-avatar">D</div>
+                    <h3 class="team-name">مقداد</h3>
+                    <p class="team-role" data-i18n="about.role_lead">قائد الفريق ومطور الواجهات</p>
+                    <div class="team-socials">
+                        <a href="#" title="GitHub"><i data-lucide="github"></i></a>
+                        <a href="#" title="LinkedIn"><i data-lucide="linkedin"></i></a>
+                    </div>
+                </div>
+
+                <!-- عضو الفريق الثاني -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));">A</div>
+                    <h3 class="team-name">أحمد</h3>
+                    <p class="team-role" data-i18n="about.role_backend">مهندس النظم الخلفية</p>
+                    <div class="team-socials">
+                        <a href="#" title="GitHub"><i data-lucide="github"></i></a>
+                        <a href="#" title="LinkedIn"><i data-lucide="linkedin"></i></a>
+                    </div>
+                </div>
+
+                <!-- عضو الفريق الثالث -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(135deg, var(--color-danger), var(--color-gold));">S</div>
+                    <h3 class="team-name">سارة</h3>
+                    <p class="team-role" data-i18n="about.role_design">مصممة تجربة المستخدم UI/UX</p>
+                    <div class="team-socials">
+                        <a href="#" title="GitHub"><i data-lucide="github"></i></a>
+                        <a href="#" title="LinkedIn"><i data-lucide="linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- الفوتر والقائمة الجانبية سيتم حقنهم تلقائياً عبر layout.js -->
+
+    <!-- JS Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/cache.js"></script>
+    <script src="js/error-handler.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/lang-switcher.js"></script>
+    <script src="js/theme-toggle.js"></script>
+    
+    <!-- استدعاء ملف التصميم الموحد (يحقن الهيدر والفوتر) -->
+    <script src="js/layout.js"></script>
+    
+    <!-- UI Script (ضروري لعمل القائمة الجانبية) -->
+    <script src="js/ui.js"></script>
+    
+    <script src="js/pwa.js"></script>
+    
+    <!-- سكربت التهيئة الخاص بهذه الصفحة -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            ErrorHandler.init();
+            await I18n.init();
+            ThemeManager.init();
+            LangSwitcher.init();
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

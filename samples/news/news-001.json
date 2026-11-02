@@ -1,0 +1,14 @@
+{
+  "id": "news-001",
+  "date": "2026-10-20",
+  "pinned": true,
+  "image": "images/news-001.jpg",
+  "title": {
+    "ar": "بدء التسجيل للترم الثاني",
+    "en": "Term 2 Registration Open"
+  },
+  "body": {
+    "ar": "يمكنكم التسجيل للترم الثاني من الأحد إلى الخميس في مبنى الكلية. يرجى إحضار البطاقة الجامعية.",
+    "en": "Term 2 registration is open Sunday to Thursday at the college building. Please bring your student ID."
+  }
+}

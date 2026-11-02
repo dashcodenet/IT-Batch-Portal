@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأرشيف | IT Batch Portal</title>
+    
+    <!-- Fonts (Local) -->
+    <link rel="stylesheet" href="css/fonts.css">
+    
+    <!-- Icons (Local) -->
+    <script src="js/lucide.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body class="lang-ar">
+
+    <!-- الهيدر سيتم حقنه تلقائياً عبر layout.js -->
+
+    <main class="container" style="padding-top: var(--space-6); min-height: 80vh;">
+        
+        <!-- Breadcrumb -->
+        <div style="margin-bottom: var(--space-4); color: var(--color-text-muted); font-size: 0.9rem;">
+            <a href="index.html" style="color:var(--color-primary);" data-i18n="nav.home">الرئيسية</a> 
+            <span style="margin:0 8px;">/</span> 
+            <span id="current-breadcrumb" data-i18n="nav.archive">الأرشيف</span>
+        </div>
+
+        <h1 class="section-title" id="page-title" data-i18n="home.choose_year">اختر سنتك</h1>
+
+        <!-- 1. Years Grid (يظهر فقط إذا لم يتم تحديد سنة) -->
+        <div id="years-grid" class="grid-4" style="display: none;">
+            <!-- Rendered by JS -->
+        </div>
+
+        <!-- 2. Terms Tabs (يظهر فقط عند تحديد سنة) -->
+        <div id="terms-tabs" class="tabs-container" style="display: none;">
+            <!-- Rendered by JS -->
+        </div>
+
+        <!-- 3. Subjects Grid (يظهر فقط عند تحديد سنة) -->
+        <div id="subjects-grid" class="grid-3">
+            <!-- Rendered by JS -->
+        </div>
+
+    </main>
+
+    <!-- الفوتر والقائمة الجانبية سيتم حقنهم تلقائياً عبر layout.js -->
+
+    <!-- Scripts -->
+    <script src="js/config.js?v=4"></script>
+    <script src="js/cache.js?v=4"></script>
+    <script src="js/error-handler.js?v=4"></script>
+    <script src="js/toast.js?v=4"></script>
+    <script src="js/api.js?v=4"></script>
+    <script src="js/i18n.js?v=4"></script>
+    <script src="js/lang-switcher.js?v=4"></script>
+    <script src="js/theme-toggle.js?v=4"></script>
+    
+    <!-- استدعاء ملف التصميم الموحد (يحقن الهيدر والفوتر) -->
+    <script src="js/layout.js?v=4"></script>
+    
+    <!-- UI Script (ضروري لعمل القائمة الجانبية والسنوات) -->
+    <script src="js/ui.js?v=4"></script>
+    
+    <!-- Page Specific Script -->
+    <script src="js/materials.js?v=4"></script>
+    <script src="js/pwa.js?v=4"></script>
+</body>
+</html>

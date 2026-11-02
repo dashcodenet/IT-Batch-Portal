@@ -1,0 +1,45 @@
+<!-- about.html (مثال) -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+<head>
+    <meta charset="UTF-8">
+    <title>عن الدفعة | IT Batch Portal</title>
+    <!-- نفس روابط الـ CSS والخطوط -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/fonts.css">
+    <!-- استدعاء الأيقونات المحلية (يجب أن تكون قبل إغلاق body أو في الـ head) -->
+    <script src="js/lucide.min.js"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body class="lang-ar">
+    <header class="site-header">
+        <div class="container">
+            <a href="index.html" class="logo"><i data-lucide="graduation-cap" class="logo-icon"></i><span>IT Batch Portal</span></a>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">الرئيسية</a>
+                <a href="materials.html" class="nav-link">المواد</a>
+                <a href="about.html" class="nav-link active">عن الدفعة</a>
+            </nav>
+            <div class="header-actions">
+                <button id="theme-toggle" class="btn-icon"><i data-lucide="moon"></i></button>
+            </div>
+        </div>
+    </header>
+    <main class="container" style="padding-top: var(--space-8); min-height: 70vh; max-width: 800px;">
+        <h1 class="section-title">عن الدفعة</h1>
+        <div class="card card-glass">
+            <p style="font-size:1.1rem;line-height:1.8;color:var(--color-text-muted);">
+                هذه البوابة تم تصميمها وبرمجتها خصيصاً لخدمة طلاب دفعة تكنولوجيا المعلومات. 
+                تهدف إلى تنظيم المحتوى الأكاديمي (محاضرات، مختبرات، ملخصات) في مكان واحد، 
+                وتوفير تجربة تصفح سريعة وسلسة تعمل على مختلف الأجهزة بتكلفة صفرية.
+            </p>
+        </div>
+    </main>
+    <!-- Scripts -->
+    <script src="js/theme-toggle.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

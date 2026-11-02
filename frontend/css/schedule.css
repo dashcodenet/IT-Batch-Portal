@@ -1,0 +1,7 @@
+#schedule-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+.schedule-day { background: var(--color-bg-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 20px; }
+.day-name { font-size: 1.2rem; font-weight: 700; color: var(--color-primary); border-bottom: 2px solid var(--color-border); padding-bottom: 8px; margin-bottom: 16px; }
+.slot { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--color-bg-subtle); border-radius: var(--radius-md); margin-bottom: 8px; border-inline-start: 3px solid var(--color-primary); }
+.slot-time { font-weight: 700; font-size: 0.9rem; color: var(--color-text); }
+.slot-subject { font-weight: 600; font-size: 0.95rem; }
+.slot-hall { font-size: 0.8rem; background: var(--color-bg-elevated); padding: 2px 8px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); }

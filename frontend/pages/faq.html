@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الأسئلة الشائعة — بوابة دفعة IT</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/dark-mode.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/rtl.css">
+  <link rel="stylesheet" href="/css/ltr.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <style>
+    .faq-item {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-3);
+      overflow: hidden;
+      transition: border-color var(--transition-fast);
+    }
+    .faq-item[open] {
+      border-color: var(--color-primary);
+    }
+    .faq-q {
+      padding: var(--space-4);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      list-style: none;
+    }
+    .faq-q::-webkit-details-marker { display: none; }
+    .faq-q::after {
+      content: '+';
+      font-size: var(--text-xl);
+      color: var(--color-primary);
+      transition: transform var(--transition-fast);
+    }
+    .faq-item[open] .faq-q::after {
+      content: '−';
+    }
+    .faq-a {
+      padding: 0 var(--space-4) var(--space-4);
+      color: var(--color-text-secondary);
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <img src="/assets/images/logo-ar.svg" alt="IT Portal" id="logo-img">
+        <span data-i18n="site.title">بوابة دفعة IT</span>
+      </a>
+      <div class="header-actions">
+        <button id="theme-btn" class="icon-btn" aria-label="الوضع الليلي"></button>
+        <button id="lang-btn" class="icon-btn" aria-label="تبديل اللغة">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" style="max-width:800px;">
+      <h1 class="page-title" data-i18n="faq.title">الأسئلة الشائعة</h1>
+
+      <details class="faq-item" open>
+        <summary class="faq-q" data-i18n="faq.q1">كيف أجد ملازم مادة معينة؟</summary>
+        <p class="faq-a" data-i18n="faq.a1">من الصفحة الرئيسية اختر السنة، ثم الترم، ثم المادة. ستظهر لك كل الملفات مرتبة حسب الفئة (محاضرات، مختبرات، ملخصات، امتحانات، صور سبورة).</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq.q2">هل يمكنني تحميل الملفات؟</summary>
+        <p class="faq-a" data-i18n="faq.a2">نعم، كل ملف له زر "تحميل" مباشر من Google Drive، وزر "معاينة" لعرضه داخل الموقع دون تنزيل.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq.q3">لماذا لا يظهر ملف أضافه المشرف للتو؟</summary>
+        <p class="faq-a" data-i18n="faq.a3">هناك تخزين مؤقت (Cache) لمدة 15 دقيقة لتسريع الموقع. اضغط زر "تحديث" أعلى الصفحة لمسح الكاش وعرض الملف فوراً.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq.q4">هل يمكنني رفع ملفات؟</summary>
+        <p class="faq-a" data-i18n="faq.a4">الرفع متاح للمشرفين فقط. الطلاب يمكنهم التصفح والتحميل والمعاينة. لأي ملف مطلوب، تواصل مع مشرف الدفعة.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq.q5">كيف أغيّر اللغة أو الوضع الليلي؟</summary>
+        <p class="faq-a" data-i18n="faq.a5">من الأزرار أعلى الصفحة: زر "EN/ع" لتبديل اللغة، وزر القمر/الشمس لتبديل الوضع الليلي.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq.q6">هل الموقع يعمل على الجوال؟</summary>
+        <p class="faq-a" data-i18n="faq.a6">نعم، الموقع متجاوب بالكامل ويعمل على جميع الأجهزة. يمكنك أيضاً تثبيته كتطبيق من متصفح الجوال عبر "إضافة إلى الشاشة الرئيسية".</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq.q7">ماذا أفعل إن ظهرت رسالة خطأ؟</summary>
+        <p class="faq-a" data-i18n="faq.a7">تأكد من اتصالك بالإنترنت، ثم اضغط "إعادة المحاولة". إذا استمرت المشكلة، تواصل مع المشرف عبر صفحة "تواصل".</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq.q8">كيف أحفظ ملفاً في المفضلة؟</summary>
+        <p class="faq-a" data-i18n="faq.a8">اضغط أيقونة القلب ♡ على بطاقة الملف. يُحفظ على جهازك فقط (localStorage) دون حاجة لتسجيل دخول.</p>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© <span id="year"></span> <span data-i18n="site.title">بوابة دفعة IT</span></p>
+      <div class="footer-links">
+        <a href="/about.html" data-i18n="nav.about">عن المشروع</a>
+        <a href="/contact.html" data-i18n="nav.contact">تواصل</a>
+        <a href="/pages/faq.html" data-i18n="faq.title">الأسئلة الشائعة</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/theme-toggle.js"></script>
+  <script src="/js/lang-switcher.js"></script>
+  <script src="/js/main.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

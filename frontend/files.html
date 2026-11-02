@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملفات | IT Batch Portal</title>
+    
+    <!-- Fonts (Local) -->
+    <link rel="stylesheet" href="css/fonts.css">
+    
+    <!-- Icons (Local) - ⭐️ أضفنا defer -->
+    <script src="js/lucide.min.js" defer></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body class="lang-ar">
+
+    <!-- الهيدر سيتم حقنه تلقائياً عبر layout.js -->
+
+    <main class="container" style="padding-top: var(--space-6); min-height: 80vh;">
+        
+        <!-- Breadcrumb -->
+        <div style="margin-bottom: var(--space-4); color: var(--color-text-muted); font-size: 0.9rem;">
+            <a href="index.html" style="color:var(--color-primary);" data-i18n="nav.home">الرئيسية</a> 
+            <span style="margin:0 8px;">/</span> 
+            <a href="materials.html" style="color:var(--color-primary);" data-i18n="nav.materials">المواد</a>
+            <span style="margin:0 8px;">/</span> 
+            <span id="subject-title">المادة</span>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-wrapper">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="file-search" class="search-input" data-i18n-placeholder="files.search_placeholder" placeholder="ابحث في أسماء الملفات...">
+        </div>
+
+        <!-- Types Tabs (النظري / العملي) -->
+        <div id="types-tabs" class="tabs-container" style="margin-bottom: var(--space-2);">
+            <!-- Rendered by JS -->
+        </div>
+
+        <!-- Categories Tabs -->
+        <div id="categories-tabs" class="tabs-container" style="border-bottom: none; margin-bottom: var(--space-4);">
+            <!-- Rendered by JS -->
+        </div>
+
+        <!-- Files List -->
+        <div id="files-list" class="file-list">
+            <!-- Rendered by JS -->
+        </div>
+        
+        <!-- Empty Search State (Hidden by default) -->
+        <div id="search-empty-state" style="display:none; text-align:center; padding: 40px; color: var(--color-text-muted);">
+            <i data-lucide="search-x" style="width:48px;height:48px;margin-bottom:16px;"></i>
+            <p data-i18n="files.no_results">لا توجد نتائج مطابقة لبحثك</p>
+        </div>
+
+    </main>
+
+    <!-- الفوتر والقائمة الجانبية سيتم حقنهم تلقائياً عبر layout.js -->
+
+    <!-- Scripts ⭐️ تم توحيد الإصدار إلى v=31 -->
+    <script src="js/config.js?v=42" defer></script>
+    <script src="js/cache.js?v=42" defer></script>
+    <script src="js/error-handler.js?v=42" defer></script>
+    <script src="js/toast.js?v=42" defer></script>
+    <script src="js/api.js?v=42" defer></script>
+    <script src="js/i18n.js?v=42" defer></script>
+    <script src="js/lang-switcher.js?v=42" defer></script>
+    <script src="js/theme-toggle.js?v=42" defer></script>
+    
+    <script src="js/layout.js?v=42" defer></script>
+    <script src="js/ui.js?v=42" defer></script>
+    
+    <script src="js/favorites.js?v=42" defer></script>
+    <script src="js/preview.js?v=42" defer></script>
+    <script src="js/search.js?v=42" defer></script>
+    <script src="js/files.js?v=42" defer></script>
+    <script src="js/pwa.js?v=42" defer></script>
+</body>
+</html>

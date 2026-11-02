@@ -1,5 +1,5 @@
 /**
- * Preview.js - Handles PDF and Image Modal Preview
+ * Preview.js - Handles PDF and Image Modal Preview (Seamless Native Approach)
  */
 const PreviewManager = {
     init() {
@@ -23,6 +23,20 @@ const PreviewManager = {
                     border-radius: var(--radius-md);
                     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
                 }
+                .pdf-preview-wrapper {
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .pdf-preview-wrapper iframe {
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                    border-radius: var(--radius-md);
+                    background: #fff;
+                }
                 .preview-download-btn {
                     position: absolute;
                     bottom: 30px;
@@ -43,6 +57,7 @@ const PreviewManager = {
                     z-index: 10;
                     border: none;
                     outline: none;
+                    text-decoration: none;
                 }
                 .preview-download-btn:hover {
                     background: rgba(255, 255, 255, 0.3);
@@ -72,14 +87,14 @@ const PreviewManager = {
             modal.id = 'preview-modal';
             modal.className = 'modal-overlay';
             modal.innerHTML = `
-                <div class="modal-content">
+                <div class="modal-content" style="max-width: 95vw; width: 1200px; height: 90vh;">
                     <div class="modal-header">
                         <h3 id="preview-title">Preview</h3>
                         <button class="modal-close" id="preview-close">
                             <i data-lucide="x"></i>
                         </button>
                     </div>
-                    <div class="modal-body" id="preview-body" style="display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.9); overflow: hidden;">
+                    <div class="modal-body" id="preview-body" style="display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.9); overflow: hidden; padding: 0;">
                     </div>
                 </div>
             `;
@@ -96,7 +111,8 @@ const PreviewManager = {
         if (window.lucide) lucide.createIcons();
     },
 
-    open(url, title, fileType = null, fileName = null) {
+    // ⭐️ تم التعديل: نستقبل رابط المعاينة ورابط التحميل
+    open(previewUrl, downloadUrl, title, fileType = null, fileName = null) {
         this.init();
         const modal = document.getElementById('preview-modal');
         const previewBody = document.getElementById('preview-body');
@@ -105,30 +121,37 @@ const PreviewManager = {
         const safeTitle = title || 'معاينة الملف';
         titleEl.textContent = safeTitle;
 
-        let isImage = false;
-        
-        if (fileType === 'photo') {
-            isImage = true;
-        } else if (fileName) {
-            const ext = fileName.split('.').pop().toLowerCase();
-            if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) {
-                isImage = true;
-            }
-        }
-        
-        if (!isImage && url.includes('mode=preview')) {
-            if (safeTitle.toLowerCase().endsWith('.jpg') || safeTitle.toLowerCase().endsWith('.png') || safeTitle.toLowerCase().endsWith('.jpeg')) {
-                isImage = true;
-            }
-        }
+        let ext = '';
+        if (fileName) ext = fileName.split('.').pop().toLowerCase();
+        else if (title) ext = title.split('.').pop().toLowerCase();
+
+        const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext) || fileType === 'photo';
+        const isPdf = ext === 'pdf';
 
         if (isImage) {
             previewBody.innerHTML = `
                 <div class="image-preview-wrapper">
-                    <img src="${url}" alt="${safeTitle}">
-                    <button onclick="downloadFile('${url}', '${safeTitle}')" class="preview-download-btn" title="${I18n.currentLang === 'ar' ? 'تحميل الصورة' : 'Download Image'}">
+                    <img src="${previewUrl}" alt="${safeTitle}" onerror="window.handleImageError(this)">
+                    <div class="preview-error-box" style="display:none; flex-direction:column; align-items:center; color:white; text-align:center; padding: 20px; position: absolute;">
+                        <i data-lucide="alert-circle" style="width: 64px; height: 64px; margin-bottom: 16px; color: #ef4444;"></i>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-ar);">فشل تحميل المعاينة</h3>
+                        <p style="color: var(--color-text-muted); margin-bottom: 24px; font-family: var(--font-ar);">
+                            قد يكون الملف غير متاح حالياً أو حدث خطأ في الاتصال.
+                        </p>
+                    </div>
+                    <!-- ⭐️ رابط تحميل مباشر (Native) -->
+                    <a href="${downloadUrl}" class="preview-download-btn" title="${I18n.currentLang === 'ar' ? 'تحميل الصورة' : 'Download Image'}">
                         <i data-lucide="download"></i>
-                    </button>
+                    </a>
+                </div>
+            `;
+        } else if (isPdf) {
+            previewBody.innerHTML = `
+                <div class="pdf-preview-wrapper">
+                    <iframe src="${previewUrl}" title="${safeTitle}"></iframe>
+                    <a href="${downloadUrl}" class="preview-download-btn" title="${I18n.currentLang === 'ar' ? 'تحميل ملف PDF' : 'Download PDF'}">
+                        <i data-lucide="download"></i>
+                    </a>
                 </div>
             `;
         } else {
@@ -138,12 +161,12 @@ const PreviewManager = {
                     <h3 style="font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-ar);">لا يمكن معاينة هذا الملف مباشرة</h3>
                     <p style="color: var(--color-text-muted); margin-bottom: 24px; font-family: var(--font-ar);">
                         ${I18n.currentLang === 'ar' 
-                            ? 'تيليجرام يمنع عرض المستندات والملفات (PDF/Word) داخل الموقع. يرجى تحميل الملف لعرضه.' 
-                            : 'Telegram prevents previewing documents (PDF/Word) on the site. Please download the file to view it.'}
+                            ? 'هذا النوع من الملفات (مثل Word أو ZIP) لا يدعمه المتصفح للمعاينة. يرجى تحميل الملف لعرضه.' 
+                            : 'This file type (like Word or ZIP) is not supported by the browser for preview. Please download it.'}
                     </p>
-                    <button onclick="downloadFile('${url}', '${safeTitle}')" class="btn btn-primary" style="display: inline-flex; text-decoration: none; padding: 12px 24px; border-radius: var(--radius-md); background: var(--color-primary); color: #fff; font-weight: bold; border: none; cursor: pointer;">
+                    <a href="${downloadUrl}" class="btn btn-primary" style="display: inline-flex; text-decoration: none; padding: 12px 24px; border-radius: var(--radius-md); background: var(--color-primary); color: #fff; font-weight: bold; border: none; cursor: pointer;">
                         <i data-lucide="download" style="margin-left: 8px;"></i> <span>${I18n.currentLang === 'ar' ? 'تحميل الملف' : 'Download File'}</span>
-                    </button>
+                    </a>
                 </div>
             `;
         }
@@ -168,100 +191,11 @@ const PreviewManager = {
     }
 };
 
-// ⭐️ دالة التحميل المحدثة (تستخدم Blob مع رابط المعاينة)
-window.downloadFile = async function(url, fileName) {
-    if (window.Toast) {
-        Toast.show(I18n.currentLang === 'ar' ? 'جاري تجهيز الملف...' : 'Preparing file...', 'info');
+window.handleImageError = function(imgElement) {
+    imgElement.style.display = 'none';
+    const errorDiv = imgElement.nextElementSibling;
+    if (errorDiv && errorDiv.classList.contains('preview-error-box')) {
+        errorDiv.style.display = 'flex';
     }
-
-    try {
-        // جلب الملف كـ Blob من رابط المعاينة
-        const response = await fetch(url, { cache: 'no-store' });
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const blob = await response.blob();
-        
-        // استخدام الاسم الممرر مباشرة
-        const finalName = fileName || 'download';
-
-        const objectUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = objectUrl;
-        a.download = finalName; 
-        a.style.display = 'none';
-        
-        document.body.appendChild(a);
-        a.click();
-        
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(objectUrl);
-
-        if (window.Toast) {
-            Toast.show(I18n.currentLang === 'ar' ? 'تم بدء التحميل' : 'Download started', 'success');
-        }
-    } catch (error) {
-        console.error('Blob download failed:', error);
-        
-        // خطة بديلة: استخدام الرابط المباشر
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName || 'download';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
-}// ⭐️ دالة التحميل النهائية (Blob + إضافة الامتداد تلقائياً)
-window.downloadFile = async function(url, fileName) {
-    if (window.Toast) {
-        Toast.show(I18n.currentLang === 'ar' ? 'جاري تجهيز الملف...' : 'Preparing file...', 'info');
-    }
-
-    try {
-        const response = await fetch(url, { cache: 'no-store' });
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const blob = await response.blob();
-        
-        // ⭐️ تحديد الامتداد من blob.type إذا لم يكن موجوداً في اسم الملف
-        let finalName = fileName || 'download';
-        if (!/\.[a-z0-9]{2,5}$/i.test(finalName)) {
-            const mime = (blob.type || '').toLowerCase();
-            const extMap = {
-                'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/png': 'png',
-                'image/gif': 'gif', 'image/webp': 'webp', 'image/svg+xml': 'svg',
-                'application/pdf': 'pdf', 'application/zip': 'zip',
-                'application/vnd.rar': 'rar', 'application/x-rar-compressed': 'rar',
-                'application/msword': 'doc',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
-                'application/vnd.ms-powerpoint': 'ppt',
-                'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx'
-            };
-            const ext = extMap[mime] || 'bin';
-            finalName = `${finalName}.${ext}`;
-        }
-
-        const objectUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = objectUrl;
-        a.download = finalName;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(objectUrl);
-
-        if (window.Toast) {
-            Toast.show(I18n.currentLang === 'ar' ? 'تم بدء التحميل' : 'Download started', 'success');
-        }
-    } catch (error) {
-        console.error('Blob download failed:', error);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName || 'download';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
+    if (window.lucide) lucide.createIcons();
 };

@@ -139,9 +139,10 @@ function renderFiles(category) {
             if (file.name.toLowerCase().endsWith('.doc') || file.name.toLowerCase().endsWith('.docx')) fileIcon = 'file-text';
             if (file.name.toLowerCase().endsWith('.ppt') || file.name.toLowerCase().endsWith('.pptx')) fileIcon = 'presentation';
 
-            const safeName = file.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+            // ⭐️ تأمين الروابط
             const safePreviewUrl = file.previewUrl.replace(/'/g, "%27");
             const safeDownloadUrl = file.downloadUrl.replace(/'/g, "%27");
+            const safeName = file.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
 
             fileItem.innerHTML = `
                 <div class="file-info">
@@ -157,15 +158,15 @@ function renderFiles(category) {
                     </div>
                 </div>
                 <div class="file-actions">
-                    <!-- ⭐️ تصحيح: تمرير رابط المعاينة ورابط التحميل للدالة -->
+                    <!-- ⭐️ زر المعاينة يفتح المودال -->
                     <button class="btn-action btn-preview" onclick="PreviewManager.open('${safePreviewUrl}', '${safeDownloadUrl}', '${safeName}', '${file.fileType}', '${safeName}')">
                         <i data-lucide="eye"></i> <span>${I18n.t('common.preview')}</span>
                     </button>
                     
-                    <!-- ⭐️ تصحيح: استخدام زر onclick بدلاً من <a> لضمان التحميل في الهاتف -->
-                    <button onclick="downloadFile('${safePreviewUrl}', '${safeName}')" class="btn-action btn-download">
+                    <!-- ⭐️ زر التحميل أصبح رابط مباشر (Native Download) -->
+                    <a href="${safeDownloadUrl}" class="btn-action btn-download" style="text-decoration: none;">
                         <i data-lucide="download"></i> <span>${I18n.t('common.download')}</span>
-                    </button>
+                    </a>
 
                     <button class="btn-action btn-fav ${isFav ? 'active' : ''}" onclick="toggleFav(this, '${file.id}')">
                         <i data-lucide="heart"></i>

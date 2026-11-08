@@ -1,5 +1,5 @@
 /**
- * Preview.js - Handles PDF and Image Modal Preview (Seamless Native Approach)
+ * Preview.js - Handles PDF and Image Modal Preview
  */
 const PreviewManager = {
     init() {
@@ -23,20 +23,6 @@ const PreviewManager = {
                     border-radius: var(--radius-md);
                     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
                 }
-                .pdf-preview-wrapper {
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .pdf-preview-wrapper iframe {
-                    width: 100%;
-                    height: 100%;
-                    border: none;
-                    border-radius: var(--radius-md);
-                    background: #fff;
-                }
                 .preview-download-btn {
                     position: absolute;
                     bottom: 30px;
@@ -55,8 +41,6 @@ const PreviewManager = {
                     cursor: pointer;
                     transition: all 0.3s ease;
                     z-index: 10;
-                    border: none;
-                    outline: none;
                     text-decoration: none;
                 }
                 .preview-download-btn:hover {
@@ -87,14 +71,14 @@ const PreviewManager = {
             modal.id = 'preview-modal';
             modal.className = 'modal-overlay';
             modal.innerHTML = `
-                <div class="modal-content" style="max-width: 95vw; width: 1200px; height: 90vh;">
+                <div class="modal-content">
                     <div class="modal-header">
                         <h3 id="preview-title">Preview</h3>
                         <button class="modal-close" id="preview-close">
                             <i data-lucide="x"></i>
                         </button>
                     </div>
-                    <div class="modal-body" id="preview-body" style="display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.9); overflow: hidden; padding: 0;">
+                    <div class="modal-body" id="preview-body" style="display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.9); overflow: hidden;">
                     </div>
                 </div>
             `;
@@ -111,8 +95,7 @@ const PreviewManager = {
         if (window.lucide) lucide.createIcons();
     },
 
-    // ⭐️ تم التعديل: نستقبل رابط المعاينة ورابط التحميل
-    open(previewUrl, downloadUrl, title, fileType = null, fileName = null) {
+    open(url, title, fileType = null, fileName = null) {
         this.init();
         const modal = document.getElementById('preview-modal');
         const previewBody = document.getElementById('preview-body');
@@ -121,35 +104,32 @@ const PreviewManager = {
         const safeTitle = title || 'معاينة الملف';
         titleEl.textContent = safeTitle;
 
-        let ext = '';
-        if (fileName) ext = fileName.split('.').pop().toLowerCase();
-        else if (title) ext = title.split('.').pop().toLowerCase();
+        // استخدام رابط التحميل المباشر بدلاً من الـ Blob
+        const downloadUrl = url.replace('mode=preview', 'mode=download');
 
-        const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext) || fileType === 'photo';
-        const isPdf = ext === 'pdf';
+        let isImage = false;
+        
+        if (fileType === 'photo') {
+            isImage = true;
+        } else if (fileName) {
+            const ext = fileName.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) {
+                isImage = true;
+            }
+        }
+        
+        if (!isImage && url.includes('mode=preview')) {
+            if (safeTitle.toLowerCase().endsWith('.jpg') || safeTitle.toLowerCase().endsWith('.png') || safeTitle.toLowerCase().endsWith('.jpeg')) {
+                isImage = true;
+            }
+        }
 
         if (isImage) {
             previewBody.innerHTML = `
                 <div class="image-preview-wrapper">
-                    <img src="${previewUrl}" alt="${safeTitle}" onerror="window.handleImageError(this)">
-                    <div class="preview-error-box" style="display:none; flex-direction:column; align-items:center; color:white; text-align:center; padding: 20px; position: absolute;">
-                        <i data-lucide="alert-circle" style="width: 64px; height: 64px; margin-bottom: 16px; color: #ef4444;"></i>
-                        <h3 style="font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-ar);">فشل تحميل المعاينة</h3>
-                        <p style="color: var(--color-text-muted); margin-bottom: 24px; font-family: var(--font-ar);">
-                            قد يكون الملف غير متاح حالياً أو حدث خطأ في الاتصال.
-                        </p>
-                    </div>
-                    <!-- ⭐️ رابط تحميل مباشر (Native) -->
-                    <a href="${downloadUrl}" class="preview-download-btn" title="${I18n.currentLang === 'ar' ? 'تحميل الصورة' : 'Download Image'}">
-                        <i data-lucide="download"></i>
-                    </a>
-                </div>
-            `;
-        } else if (isPdf) {
-            previewBody.innerHTML = `
-                <div class="pdf-preview-wrapper">
-                    <iframe src="${previewUrl}" title="${safeTitle}"></iframe>
-                    <a href="${downloadUrl}" class="preview-download-btn" title="${I18n.currentLang === 'ar' ? 'تحميل ملف PDF' : 'Download PDF'}">
+                    <img src="${url}" alt="${safeTitle}">
+                    <!-- ⭐️ رابط مباشر للتحميل يعمل على جميع الأجهزة -->
+                    <a href="${downloadUrl}" download="${safeTitle}" class="preview-download-btn" title="${I18n.currentLang === 'ar' ? 'تحميل الصورة' : 'Download Image'}">
                         <i data-lucide="download"></i>
                     </a>
                 </div>
@@ -161,10 +141,11 @@ const PreviewManager = {
                     <h3 style="font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-ar);">لا يمكن معاينة هذا الملف مباشرة</h3>
                     <p style="color: var(--color-text-muted); margin-bottom: 24px; font-family: var(--font-ar);">
                         ${I18n.currentLang === 'ar' 
-                            ? 'هذا النوع من الملفات (مثل Word أو ZIP) لا يدعمه المتصفح للمعاينة. يرجى تحميل الملف لعرضه.' 
-                            : 'This file type (like Word or ZIP) is not supported by the browser for preview. Please download it.'}
+                            ? 'تيليجرام يمنع عرض المستندات والملفات (PDF/Word) داخل الموقع. يرجى تحميل الملف لعرضه.' 
+                            : 'Telegram prevents previewing documents (PDF/Word) on the site. Please download the file to view it.'}
                     </p>
-                    <a href="${downloadUrl}" class="btn btn-primary" style="display: inline-flex; text-decoration: none; padding: 12px 24px; border-radius: var(--radius-md); background: var(--color-primary); color: #fff; font-weight: bold; border: none; cursor: pointer;">
+                    <!-- ⭐️ رابط مباشر للتحميل يعمل على جميع الأجهزة -->
+                    <a href="${downloadUrl}" download="${safeTitle}" class="btn btn-primary" style="display: inline-flex; text-decoration: none; padding: 12px 24px; border-radius: var(--radius-md); background: var(--color-primary); color: #fff; font-weight: bold;">
                         <i data-lucide="download" style="margin-left: 8px;"></i> <span>${I18n.currentLang === 'ar' ? 'تحميل الملف' : 'Download File'}</span>
                     </a>
                 </div>
@@ -190,12 +171,4 @@ const PreviewManager = {
         }, 300);
     }
 };
-
-window.handleImageError = function(imgElement) {
-    imgElement.style.display = 'none';
-    const errorDiv = imgElement.nextElementSibling;
-    if (errorDiv && errorDiv.classList.contains('preview-error-box')) {
-        errorDiv.style.display = 'flex';
-    }
-    if (window.lucide) lucide.createIcons();
-};
+// ⭐️ تم حذف دالة downloadFile بالكامل لأننا لم نعد بحاجتها

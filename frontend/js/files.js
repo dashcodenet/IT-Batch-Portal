@@ -139,10 +139,7 @@ function renderFiles(category) {
             if (file.name.toLowerCase().endsWith('.doc') || file.name.toLowerCase().endsWith('.docx')) fileIcon = 'file-text';
             if (file.name.toLowerCase().endsWith('.ppt') || file.name.toLowerCase().endsWith('.pptx')) fileIcon = 'presentation';
 
-            // ⭐️ تأمين الروابط
-            const safePreviewUrl = file.previewUrl.replace(/'/g, "%27");
-            const safeDownloadUrl = file.downloadUrl.replace(/'/g, "%27");
-            const safeName = file.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+            const safeName = file.name.replace(/'/g, "\\'");
 
             fileItem.innerHTML = `
                 <div class="file-info">
@@ -158,13 +155,12 @@ function renderFiles(category) {
                     </div>
                 </div>
                 <div class="file-actions">
-                    <!-- ⭐️ زر المعاينة يفتح المودال -->
-                    <button class="btn-action btn-preview" onclick="PreviewManager.open('${safePreviewUrl}', '${safeDownloadUrl}', '${safeName}', '${file.fileType}', '${safeName}')">
+                    <button class="btn-action btn-preview" onclick="PreviewManager.open('${file.previewUrl}', '${safeName}', '${file.fileType}', '${safeName}')">
                         <i data-lucide="eye"></i> <span>${I18n.t('common.preview')}</span>
                     </button>
                     
-                    <!-- ⭐️ زر التحميل أصبح رابط مباشر (Native Download) -->
-                    <a href="${safeDownloadUrl}" class="btn-action btn-download" style="text-decoration: none;">
+                    <!-- ⭐️ رابط مباشر للتحميل يعمل على جميع الأجهزة -->
+                    <a href="${file.downloadUrl}" download="${safeName}" class="btn-action btn-download">
                         <i data-lucide="download"></i> <span>${I18n.t('common.download')}</span>
                     </a>
 

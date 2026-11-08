@@ -41,7 +41,8 @@ const PreviewManager = {
                     cursor: pointer;
                     transition: all 0.3s ease;
                     z-index: 10;
-                    text-decoration: none;
+                    border: none;
+                    outline: none;
                 }
                 .preview-download-btn:hover {
                     background: rgba(255, 255, 255, 0.3);
@@ -95,7 +96,7 @@ const PreviewManager = {
         if (window.lucide) lucide.createIcons();
     },
 
-    open(url, title, fileType = null, fileName = null) {
+    open(previewUrl, downloadUrl, title, fileType = null, fileName = null) {
         this.init();
         const modal = document.getElementById('preview-modal');
         const previewBody = document.getElementById('preview-body');
@@ -104,34 +105,34 @@ const PreviewManager = {
         const safeTitle = title || 'معاينة الملف';
         titleEl.textContent = safeTitle;
 
-        // استخدام رابط التحميل المباشر بدلاً من الـ Blob
-        const downloadUrl = url.replace('mode=preview', 'mode=download');
+        let ext = '';
+        if (fileName) ext = fileName.split('.').pop().toLowerCase();
+        else if (title) ext = title.split('.').pop().toLowerCase();
 
-        let isImage = false;
-        
-        if (fileType === 'photo') {
-            isImage = true;
-        } else if (fileName) {
-            const ext = fileName.split('.').pop().toLowerCase();
-            if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) {
-                isImage = true;
-            }
-        }
-        
-        if (!isImage && url.includes('mode=preview')) {
-            if (safeTitle.toLowerCase().endsWith('.jpg') || safeTitle.toLowerCase().endsWith('.png') || safeTitle.toLowerCase().endsWith('.jpeg')) {
-                isImage = true;
-            }
-        }
+        const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext) || fileType === 'photo';
+        const isPdf = ext === 'pdf';
 
         if (isImage) {
             previewBody.innerHTML = `
                 <div class="image-preview-wrapper">
-                    <img src="${url}" alt="${safeTitle}">
-                    <!-- ⭐️ رابط مباشر للتحميل يعمل على جميع الأجهزة -->
-                    <a href="${downloadUrl}" download="${safeTitle}" class="preview-download-btn" title="${I18n.currentLang === 'ar' ? 'تحميل الصورة' : 'Download Image'}">
+                    <img src="${previewUrl}" alt="${safeTitle}" onerror="window.handleImageError(this)">
+                    <div class="preview-error-box" style="display:none; flex-direction:column; align-items:center; color:white; text-align:center; padding: 20px; position: absolute;">
+                        <i data-lucide="alert-circle" style="width: 64px; height: 64px; margin-bottom: 16px; color: #ef4444;"></i>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-ar);">فشل تحميل المعاينة</h3>
+                        <p style="color: var(--color-text-muted); margin-bottom: 24px; font-family: var(--font-ar);">
+                            قد يكون الملف غير متاح حالياً أو حدث خطأ في الاتصال.
+                        </p>
+                    </div>
+                    <button onclick="downloadFile('${previewUrl}', '${safeTitle}')" class="preview-download-btn" title="${I18n.currentLang === 'ar' ? 'تحميل الصورة' : 'Download Image'}">
                         <i data-lucide="download"></i>
-                    </a>
+                    </button>
+                </div>
+            `;
+        } else if (isPdf) {
+            previewBody.innerHTML = `
+                <div class="pdf-preview-wrapper" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative;">
+                    <iframe src="${previewUrl}#toolbar=0" title="${safeTitle}" style="width:100%; height:100%; border:none; border-radius:var(--radius-md); background:#fff;"></iframe>
+                    <button onclick="downloadFile('${previewUrl}', '${safeTitle}')" class="preview-download-btn" title="تحميل"><i data-lucide="download"></i></button>
                 </div>
             `;
         } else {
@@ -141,13 +142,12 @@ const PreviewManager = {
                     <h3 style="font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-ar);">لا يمكن معاينة هذا الملف مباشرة</h3>
                     <p style="color: var(--color-text-muted); margin-bottom: 24px; font-family: var(--font-ar);">
                         ${I18n.currentLang === 'ar' 
-                            ? 'تيليجرام يمنع عرض المستندات والملفات (PDF/Word) داخل الموقع. يرجى تحميل الملف لعرضه.' 
-                            : 'Telegram prevents previewing documents (PDF/Word) on the site. Please download the file to view it.'}
+                            ? 'هذا النوع من الملفات لا يدعمه المتصفح للمعاينة. يرجى تحميل الملف لعرضه.' 
+                            : 'This file type is not supported by the browser for preview. Please download it.'}
                     </p>
-                    <!-- ⭐️ رابط مباشر للتحميل يعمل على جميع الأجهزة -->
-                    <a href="${downloadUrl}" download="${safeTitle}" class="btn btn-primary" style="display: inline-flex; text-decoration: none; padding: 12px 24px; border-radius: var(--radius-md); background: var(--color-primary); color: #fff; font-weight: bold;">
+                    <button onclick="downloadFile('${previewUrl}', '${safeTitle}')" class="btn btn-primary" style="display: inline-flex; text-decoration: none; padding: 12px 24px; border-radius: var(--radius-md); background: var(--color-primary); color: #fff; font-weight: bold; border: none; cursor: pointer;">
                         <i data-lucide="download" style="margin-left: 8px;"></i> <span>${I18n.currentLang === 'ar' ? 'تحميل الملف' : 'Download File'}</span>
-                    </a>
+                    </button>
                 </div>
             `;
         }
@@ -171,4 +171,55 @@ const PreviewManager = {
         }, 300);
     }
 };
-// ⭐️ تم حذف دالة downloadFile بالكامل لأننا لم نعد بحاجتها
+
+window.handleImageError = function(imgElement) {
+    imgElement.style.display = 'none';
+    const errorDiv = imgElement.nextElementSibling;
+    if (errorDiv && errorDiv.classList.contains('preview-error-box')) {
+        errorDiv.style.display = 'flex';
+    }
+    if (window.lucide) lucide.createIcons();
+};
+
+// ⭐️ دالة التحميل النهائية (التي تحل مشكلة الملفات التالفة في الهاتف والكمبيوتر)
+window.downloadFile = async function(url, fileName) {
+    if (window.Toast) {
+        Toast.show(I18n.currentLang === 'ar' ? 'جاري تجهيز الملف...' : 'Preparing file...', 'info');
+    }
+
+    try {
+        const downloadUrl = url.replace('mode=preview', 'mode=download');
+        const response = await fetch(downloadUrl, { cache: 'no-store' });
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const blob = await response.blob();
+        
+        let finalName = fileName || 'download';
+        if (!/\.[a-z0-9]{2,5}$/i.test(finalName)) {
+            const mime = (blob.type || '').toLowerCase();
+            if (mime.includes('pdf')) finalName += '.pdf';
+            else if (mime.includes('image')) finalName += '.jpg';
+            else finalName += '.bin';
+        }
+
+        const objectUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = objectUrl;
+        a.download = finalName;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(objectUrl);
+
+        if (window.Toast) {
+            Toast.show(I18n.currentLang === 'ar' ? 'تم بدء التحميل' : 'Download started', 'success');
+        }
+    } catch (error) {
+        console.error('Download Error:', error);
+        if (window.Toast) {
+            Toast.show(I18n.currentLang === 'ar' ? 'فشل التحميل. حاول مرة أخرى.' : 'Download failed. Try again.', 'error');
+        }
+    }
+};

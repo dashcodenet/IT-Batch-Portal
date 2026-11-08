@@ -16,37 +16,33 @@ exports.handler = async (event, context) => {
 
     const fileUrl = `https://api.telegram.org/file/bot${token}/${tgData.result.file_path}`;
 
-    // ⭐️ السحر هنا: إذا كان الطلب للمعاينة، نوجه المتصفح مباشرة لتيليجرام (سرعة فائقة)
-    if (mode === 'preview') {
-        return {
-            statusCode: 302, // 302 يعني Redirect
-            headers: {
-                'Location': fileUrl,
-                'Access-Control-Allow-Origin': '*'
-            }
-        };
-    }
-
-    // إذا كان الطلب للتحميل (download)، نستخدم Proxy لإجبار المتصفح على التحميل
+    // 2. جلب الملف نفسه
     const fileRes = await fetch(fileUrl);
     const arrayBuffer = await fileRes.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
     const safeFileName = encodeURIComponent(name || 'download');
+    const disposition = mode === 'download' ? 'attachment' : 'inline';
     
     let contentType = 'application/octet-stream';
     const ext = safeFileName.split('.').pop().toLowerCase();
     if (['jpg', 'jpeg'].includes(ext)) contentType = 'image/jpeg';
     else if (ext === 'png') contentType = 'image/png';
     else if (ext === 'pdf') contentType = 'application/pdf';
+    else if (ext === 'docx') contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    else if (ext === 'pptx') contentType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+
+    // ⭐️ تجهيز الهيدرز مع منع الضغط
+    const headers = {
+      'Content-Type': contentType,
+      'Content-Disposition': `${disposition}; filename*=UTF-8''${safeFileName}`,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Expose-Headers': 'Content-Disposition'
+    };
 
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': contentType,
-        'Content-Disposition': `attachment; filename*=UTF-8''${safeFileName}`,
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers,
       body: buffer.toString('base64'),
       isBase64Encoded: true
     };

@@ -1,6 +1,6 @@
 /**
  * Ui.js - DOM Manipulation and Component Rendering (Optimized)
- * النسخة النهائية: تطابق كامل بين العربية والإنجليزية بدون فراغات أو التفاف خاطئ
+ * النسخة النهائية: تطابق كامل بين العربية والإنجليزية + تمرير سلس للصفحة وسحب مرن للسلايدر
  */
 const Ui = {
     animationFrameId: null,
@@ -10,6 +10,7 @@ const Ui = {
     sliderPointerMoveHandler: null,
     sliderPointerUpHandler: null,
     _lastSliderImages: null,
+    _lastSliderContainerId: null,
 
     el(tag, className = '', innerHTML = '') {
         const element = document.createElement(tag);
@@ -61,6 +62,7 @@ const Ui = {
         }
         if (this.sliderPointerUpHandler) {
             window.removeEventListener('pointerup', this.sliderPointerUpHandler);
+            window.removeEventListener('pointercancel', this.sliderPointerUpHandler);
             this.sliderPointerUpHandler = null;
         }
         this.isAnimating = false;
@@ -103,6 +105,7 @@ const Ui = {
         const container = document.getElementById(containerId);
         if (!container) return;
 
+        this._lastSliderContainerId = containerId;
         this._lastSliderImages = imagesData;
         this.cleanupSlider();
 
@@ -112,6 +115,7 @@ const Ui = {
         }
 
         container.style.direction = 'ltr';
+        container.style.width = '100%';
         container.style.overflow = 'hidden';
 
         const totalImages = imagesData.length;
@@ -126,7 +130,7 @@ const Ui = {
             ];
         }
 
-        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}" dir="ltr" style="display:flex;flex-direction:row;align-items:center;width:max-content;direction:ltr;">`;
+        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}" dir="ltr" style="display:flex;flex-direction:row;align-items:center;width:max-content;direction:ltr;touch-action:pan-y pinch-zoom;">`;
         allImages.forEach(img => {
             const safeName = String(img.name || 'image').replace(/'/g, "\\'");
             const previewUrl = img.previewUrl || img.imageUrl || '';
@@ -149,7 +153,9 @@ const Ui = {
             slider.style.justifyContent = 'center';
             slider.style.pointerEvents = 'auto';
         } else {
-            this.init3DSlider(container, totalImages);
+            requestAnimationFrame(() => {
+                this.init3DSlider(container, totalImages);
+            });
         }
 
         slides.forEach(slide => {
@@ -188,15 +194,20 @@ const Ui = {
         const getStepWidth = () => {
             const firstSlide = slides[0];
             const rect = firstSlide.getBoundingClientRect();
-            const slideWidth = rect.width || firstSlide.offsetWidth || 260;
-            const gap = parseFloat(window.getComputedStyle(slider).gap) || 0;
+            const slideWidth = rect.width || firstSlide.offsetWidth || 320;
+            const computedStyle = window.getComputedStyle(slider);
+            const gap = parseFloat(computedStyle.gap) || parseFloat(computedStyle.columnGap) || 16;
             return slideWidth + gap;
         };
 
         let stepWidth = getStepWidth();
         let setWidth = stepWidth * totalImages;
         let isDragging = false;
-        let startX = 0;
+        let hasDecidedDirection = false;
+        let isPointerDown = false;
+        let initialX = 0;
+        let initialY = 0;
+        let dragOffsetX = 0;
         const autoScrollSpeed = 0.5;
         let baseTranslate = -2 * setWidth;
 
@@ -212,24 +223,53 @@ const Ui = {
         window.addEventListener('resize', this.sliderResizeHandler);
 
         slider.addEventListener('pointerdown', (e) => {
-            isDragging = true;
-            startX = e.clientX - baseTranslate;
-            slider.style.cursor = 'grabbing';
+            if (e.button !== 0 && e.pointerType === 'mouse') return;
+            isPointerDown = true;
+            isDragging = false;
+            hasDecidedDirection = false;
+            initialX = e.clientX;
+            initialY = e.clientY;
+            dragOffsetX = e.clientX - baseTranslate;
         });
 
         this.sliderPointerMoveHandler = (e) => {
-            if (!isDragging) return;
-            baseTranslate = e.clientX - startX;
+            if (!isPointerDown) return;
+
+            const dx = e.clientX - initialX;
+            const dy = e.clientY - initialY;
+
+            if (!hasDecidedDirection) {
+                if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+                hasDecidedDirection = true;
+
+                // إذا كانت الحركة عمودية، نترك المتصفح يمرر الصفحة بشكل طبيعي
+                if (Math.abs(dy) > Math.abs(dx)) {
+                    isPointerDown = false;
+                    isDragging = false;
+                    return;
+                }
+
+                isDragging = true;
+                dragOffsetX = e.clientX - baseTranslate;
+                slider.style.cursor = 'grabbing';
+            }
+
+            if (isDragging) {
+                baseTranslate = e.clientX - dragOffsetX;
+            }
         };
-        window.addEventListener('pointermove', this.sliderPointerMoveHandler);
+        window.addEventListener('pointermove', this.sliderPointerMoveHandler, { passive: true });
 
         this.sliderPointerUpHandler = () => {
+            isPointerDown = false;
+            hasDecidedDirection = false;
             if (isDragging) {
                 isDragging = false;
                 slider.style.cursor = 'grab';
             }
         };
         window.addEventListener('pointerup', this.sliderPointerUpHandler);
+        window.addEventListener('pointercancel', this.sliderPointerUpHandler);
 
         slider.addEventListener('dragstart', (e) => e.preventDefault());
         slider.style.cursor = 'grab';
@@ -242,6 +282,9 @@ const Ui = {
             if (!setWidth || setWidth <= 0) {
                 stepWidth = getStepWidth();
                 setWidth = stepWidth * totalImages;
+                if (setWidth > 0 && baseTranslate === 0) {
+                    baseTranslate = -2 * setWidth;
+                }
             }
 
             if (!isDragging && setWidth > 0) {
@@ -260,16 +303,19 @@ const Ui = {
             slider.style.transform = `translate3d(${baseTranslate}px, 0, 0)`;
 
             const containerRect = container.getBoundingClientRect();
-            const containerCenter = containerRect.left + containerRect.width / 2;
-            const maxDistance = Math.max(containerRect.width / 2, 1);
+            const referenceWidth = containerRect.width > 100 ? containerRect.width : window.innerWidth;
+            const referenceCenter = containerRect.width > 100
+                ? (containerRect.left + containerRect.width / 2)
+                : (window.innerWidth / 2);
+            const maxDistance = Math.max(referenceWidth / 2, 1);
 
             slides.forEach((slide, index) => {
                 const slideRect = slide.getBoundingClientRect();
-                const slideCenter = slideRect.width
+                const slideCenter = slideRect.width > 0
                     ? (slideRect.left + slideRect.width / 2)
-                    : (containerRect.left + baseTranslate + index * stepWidth + stepWidth / 2);
+                    : (referenceCenter - referenceWidth / 2 + baseTranslate + index * stepWidth + stepWidth / 2);
 
-                const distance = slideCenter - containerCenter;
+                const distance = slideCenter - referenceCenter;
                 let factor = Math.abs(distance) / maxDistance;
                 if (factor > 1) factor = 1;
 
@@ -354,8 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('languageChanged', () => {
-    const sliderContainer = document.querySelector('.news-slider')?.parentElement;
-    if (sliderContainer && sliderContainer.id && Array.isArray(Ui._lastSliderImages)) {
-        Ui.renderNewsSlider(sliderContainer.id, Ui._lastSliderImages);
+    if (Ui._lastSliderContainerId && Array.isArray(Ui._lastSliderImages)) {
+        requestAnimationFrame(() => {
+            Ui.renderNewsSlider(Ui._lastSliderContainerId, Ui._lastSliderImages);
+        });
     }
 });

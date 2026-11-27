@@ -719,3 +719,22 @@
         gap: 8px;
     }
 }
+/* ==========================================================================
+   RTL / LTR 3D News Slider Synchronization Fix
+   ========================================================================== */
+#news-slider-container,
+.news-slider-wrapper {
+    direction: ltr !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    position: relative;
+}
+
+.news-slider {
+    direction: ltr !important;
+    flex-direction: row !important;
+    display: flex !important;
+    align-items: center !important;
+    width: max-content !important;
+}

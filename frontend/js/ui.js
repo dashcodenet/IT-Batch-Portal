@@ -1,11 +1,14 @@
 /**
  * Ui.js - DOM Manipulation and Component Rendering (Optimized)
- * النسخة النهائية: حل جذري لمشكلة الفراغات والالتفاف اللانهائي (RTL & LTR)
+ * النسخة النهائية: تطابق كامل بين العربية والإنجليزية بدون فراغات أو التفاف خاطئ
  */
 const Ui = {
     animationFrameId: null,
     isAnimating: false,
     sliderObserver: null,
+    sliderResizeHandler: null,
+    sliderPointerMoveHandler: null,
+    sliderPointerUpHandler: null,
 
     el(tag, className = '', innerHTML = '') {
         const element = document.createElement(tag);
@@ -36,6 +39,30 @@ const Ui = {
 
         if (closeBtn) closeBtn.addEventListener('click', closeMenu);
         overlay.addEventListener('click', closeMenu);
+    },
+
+    cleanupSlider() {
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+        if (this.sliderObserver) {
+            this.sliderObserver.disconnect();
+            this.sliderObserver = null;
+        }
+        if (this.sliderResizeHandler) {
+            window.removeEventListener('resize', this.sliderResizeHandler);
+            this.sliderResizeHandler = null;
+        }
+        if (this.sliderPointerMoveHandler) {
+            window.removeEventListener('pointermove', this.sliderPointerMoveHandler);
+            this.sliderPointerMoveHandler = null;
+        }
+        if (this.sliderPointerUpHandler) {
+            window.removeEventListener('pointerup', this.sliderPointerUpHandler);
+            this.sliderPointerUpHandler = null;
+        }
+        this.isAnimating = false;
     },
 
     renderYears(containerId, yearsData) {
@@ -75,15 +102,7 @@ const Ui = {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        if (this.animationFrameId) {
-            cancelAnimationFrame(this.animationFrameId);
-            this.animationFrameId = null;
-        }
-        if (this.sliderObserver) {
-            this.sliderObserver.disconnect();
-            this.sliderObserver = null;
-        }
-        this.isAnimating = false;
+        this.cleanupSlider();
 
         if (!imagesData || imagesData.length === 0) {
             container.innerHTML = `<p style="text-align:center;color:var(--color-text-muted);width:100%;">${I18n.currentLang === 'ar' ? 'لا توجد تعميمات حالياً' : 'No announcements currently'}</p>`;
@@ -102,7 +121,7 @@ const Ui = {
             ];
         }
 
-        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}" dir="ltr">`;
+        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}" dir="ltr" style="direction:ltr;flex-direction:row;">`;
         allImages.forEach(img => {
             const safeName = String(img.name || 'image').replace(/'/g, "\\'");
             const previewUrl = img.previewUrl || img.imageUrl || '';
@@ -124,7 +143,7 @@ const Ui = {
             slider.style.justifyContent = 'center';
             slider.style.pointerEvents = 'auto';
         } else {
-            this.init3DSlider(container, totalImages, allImages.length);
+            this.init3DSlider(container, totalImages);
         }
 
         slides.forEach(slide => {
@@ -153,7 +172,7 @@ const Ui = {
         });
     },
 
-    init3DSlider(container, totalImages, totalSlides) {
+    init3DSlider(container, totalImages) {
         const slider = container.querySelector('.news-slider');
         if (!slider) return;
 
@@ -174,13 +193,13 @@ const Ui = {
         const autoScrollSpeed = 0.5;
         let baseTranslate = -2 * setWidth;
 
-        const onResize = () => {
+        this.sliderResizeHandler = () => {
             const prevSetWidth = setWidth || 1;
             const ratio = baseTranslate / prevSetWidth;
             setWidth = getSetWidth();
             baseTranslate = ratio * setWidth;
         };
-        window.addEventListener('resize', onResize);
+        window.addEventListener('resize', this.sliderResizeHandler);
 
         slider.addEventListener('pointerdown', (e) => {
             isDragging = true;
@@ -188,30 +207,33 @@ const Ui = {
             slider.style.cursor = 'grabbing';
         });
 
-        window.addEventListener('pointermove', (e) => {
+        this.sliderPointerMoveHandler = (e) => {
             if (!isDragging) return;
             baseTranslate = e.clientX - startX;
-        });
+        };
+        window.addEventListener('pointermove', this.sliderPointerMoveHandler);
 
-        window.addEventListener('pointerup', () => {
+        this.sliderPointerUpHandler = () => {
             if (isDragging) {
                 isDragging = false;
                 slider.style.cursor = 'grab';
             }
-        });
+        };
+        window.addEventListener('pointerup', this.sliderPointerUpHandler);
 
         slider.addEventListener('dragstart', (e) => e.preventDefault());
         slider.style.cursor = 'grab';
         slides.forEach(slide => {
             slide.style.transition = 'none';
+            slide.style.transformOrigin = 'center center';
         });
 
         const updateAnimation = () => {
             if (!setWidth) setWidth = getSetWidth();
 
+            // حركة موحدة في جميع اللغات لتطابق الإنجليزية تماماً
             if (!isDragging && setWidth > 0) {
-                const isRTL = document.documentElement.dir === 'rtl' || document.body.dir === 'rtl';
-                baseTranslate += isRTL ? autoScrollSpeed : -autoScrollSpeed;
+                baseTranslate -= autoScrollSpeed;
             }
 
             if (setWidth > 0) {

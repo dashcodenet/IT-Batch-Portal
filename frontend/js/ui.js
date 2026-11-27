@@ -99,7 +99,9 @@ const Ui = {
         } else {
             // ⭐️ سر الجذر: نكرر الصور 4 مرات دائماً لضمان أن الشريط أطول من أي شاشة
             // هذا يمنع ظهور الفراغ الأيسر أو الأيمن نهائياً
-            allImages = [...imagesData, ...imagesData, ...imagesData, ...imagesData];
+            allImages = [...imagesData, ...imagesData, ...imagesData, 
+                        ...imagesData, ...imagesData, ...imagesData
+                     ];
         }
 
         let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}">`;
@@ -150,7 +152,7 @@ const Ui = {
         });
     },
 
-    init3DSlider(container, totalImages, totalSlides) {
+        init3DSlider(container, totalImages, totalSlides) {
         const slider = container.querySelector('.news-slider');
         if (!slider) return;
 
@@ -162,10 +164,10 @@ const Ui = {
 
         let isDragging = false;
         let startX = 0;
-        let autoScrollSpeed = 0.5; 
+        let autoScrollSpeed = 0.5; // سرعة الحركة التلقائية
         
-        // ⭐️ البداية دائماً من -setWidth لضمان وجود صور على اليسار واليمين
-        let baseTranslate = -setWidth;
+        // نبدأ من المنتصف لضمان وجود صور على اليمين واليسار
+        let baseTranslate = isRTL ? -setWidth : -setWidth;
 
         slider.addEventListener('pointerdown', (e) => {
             isDragging = true;
@@ -191,23 +193,24 @@ const Ui = {
 
         const updateAnimation = () => {
             if (!isDragging) {
-                // الحركة بناءً على اتجاه اللغة
                 if (isRTL) baseTranslate += autoScrollSpeed;
                 else baseTranslate -= autoScrollSpeed;
             }
 
-            // ⭐️ الحل الجذري للالتفاف (Loop): 
-            // إذا وصلنا لنهاية المجموعة الثانية، نقفز بمقدار مجموعة واحدة.
-            // لأن الصور متطابقة، لن يرى المستخدم أي قفزة.
+            // ⭐️ السحر الحقيقي: نظام الالتفاف اللانهائي (Infinite Loop Math)
+            // نضمن أن الشريط يبقى دائماً في المنتصف (بين المجموعة الثانية والثالثة)
+            // بغض النظر عن مقدار السحب، لن تظهر أي مساحة فارغة أبداً
             if (isRTL) {
-                if (baseTranslate >= 0) baseTranslate -= setWidth;
+                if (baseTranslate > 0) baseTranslate -= setWidth;
+                else if (baseTranslate < -2 * setWidth) baseTranslate += setWidth;
             } else {
-                if (baseTranslate <= -2 * setWidth) baseTranslate += setWidth;
+                if (baseTranslate < -2 * setWidth) baseTranslate += setWidth;
+                else if (baseTranslate > -setWidth) baseTranslate -= setWidth;
             }
 
             slider.style.transform = `translate3d(${baseTranslate}px, 0, 0)`;
 
-            // ⭐️ كود الـ 3D الأصلي الخاص بك (تأثير قوي جداً كما طلبت)
+            // حساب تأثير 3D
             const containerRect = container.getBoundingClientRect();
             const containerCenter = containerRect.left + containerRect.width / 2;
             const maxDistance = containerRect.width / 2;
@@ -220,7 +223,6 @@ const Ui = {
                 let factor = maxDistance > 0 ? Math.abs(distance) / maxDistance : 0;
                 if (factor > 1) factor = 1;
 
-                // تم الإبقاء على القيم القوية الأصلية (0.7 للشفافية و 35 للدوران)
                 const opacity = 1 - (factor * 0.7);
                 const scale = 1 - (factor * 0.15);
                 const rotateDir = distance > 0 ? 1 : -1; 
@@ -255,7 +257,6 @@ const Ui = {
 
         this.sliderObserver.observe(container);
     },
-
     renderNews(containerId, newsData) {
         const container = document.getElementById(containerId);
         if (!container) return;

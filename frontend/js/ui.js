@@ -9,6 +9,7 @@ const Ui = {
     sliderResizeHandler: null,
     sliderPointerMoveHandler: null,
     sliderPointerUpHandler: null,
+    _lastSliderImages: null,
 
     el(tag, className = '', innerHTML = '') {
         const element = document.createElement(tag);
@@ -102,12 +103,16 @@ const Ui = {
         const container = document.getElementById(containerId);
         if (!container) return;
 
+        this._lastSliderImages = imagesData;
         this.cleanupSlider();
 
         if (!imagesData || imagesData.length === 0) {
             container.innerHTML = `<p style="text-align:center;color:var(--color-text-muted);width:100%;">${I18n.currentLang === 'ar' ? 'لا توجد تعميمات حالياً' : 'No announcements currently'}</p>`;
             return;
         }
+
+        container.style.direction = 'ltr';
+        container.style.overflow = 'hidden';
 
         const totalImages = imagesData.length;
         let allImages = [];
@@ -121,13 +126,13 @@ const Ui = {
             ];
         }
 
-        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}" dir="ltr" style="direction:ltr;flex-direction:row;">`;
+        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}" dir="ltr" style="display:flex;flex-direction:row;align-items:center;width:max-content;direction:ltr;">`;
         allImages.forEach(img => {
             const safeName = String(img.name || 'image').replace(/'/g, "\\'");
             const previewUrl = img.previewUrl || img.imageUrl || '';
             const downloadUrl = img.downloadUrl || (previewUrl ? previewUrl.replace('mode=preview', 'mode=download') : '');
             html += `
-                <div class="news-slide" data-url="${previewUrl}" data-download="${downloadUrl}" data-name="${safeName}">
+                <div class="news-slide" data-url="${previewUrl}" data-download="${downloadUrl}" data-name="${safeName}" style="flex-shrink:0;">
                     <img src="${img.imageUrl}" alt="${safeName}" loading="eager" decoding="async" onerror="this.style.opacity='0';">
                 </div>
             `;
@@ -140,6 +145,7 @@ const Ui = {
         const slides = slider.querySelectorAll('.news-slide');
 
         if (totalImages === 1) {
+            slider.style.width = '100%';
             slider.style.justifyContent = 'center';
             slider.style.pointerEvents = 'auto';
         } else {
@@ -179,26 +185,30 @@ const Ui = {
         const slides = slider.querySelectorAll('.news-slide');
         if (slides.length === 0) return;
 
-        const getSetWidth = () => {
+        const getStepWidth = () => {
             const firstSlide = slides[0];
             const rect = firstSlide.getBoundingClientRect();
             const slideWidth = rect.width || firstSlide.offsetWidth || 260;
             const gap = parseFloat(window.getComputedStyle(slider).gap) || 0;
-            return (slideWidth + gap) * totalImages;
+            return slideWidth + gap;
         };
 
-        let setWidth = getSetWidth();
+        let stepWidth = getStepWidth();
+        let setWidth = stepWidth * totalImages;
         let isDragging = false;
         let startX = 0;
         const autoScrollSpeed = 0.5;
         let baseTranslate = -2 * setWidth;
 
-        this.sliderResizeHandler = () => {
+        const syncDimensions = () => {
             const prevSetWidth = setWidth || 1;
             const ratio = baseTranslate / prevSetWidth;
-            setWidth = getSetWidth();
+            stepWidth = getStepWidth();
+            setWidth = stepWidth * totalImages;
             baseTranslate = ratio * setWidth;
         };
+
+        this.sliderResizeHandler = syncDimensions;
         window.addEventListener('resize', this.sliderResizeHandler);
 
         slider.addEventListener('pointerdown', (e) => {
@@ -229,9 +239,11 @@ const Ui = {
         });
 
         const updateAnimation = () => {
-            if (!setWidth) setWidth = getSetWidth();
+            if (!setWidth || setWidth <= 0) {
+                stepWidth = getStepWidth();
+                setWidth = stepWidth * totalImages;
+            }
 
-            // حركة موحدة في جميع اللغات لتطابق الإنجليزية تماماً
             if (!isDragging && setWidth > 0) {
                 baseTranslate -= autoScrollSpeed;
             }
@@ -249,17 +261,19 @@ const Ui = {
 
             const containerRect = container.getBoundingClientRect();
             const containerCenter = containerRect.left + containerRect.width / 2;
-            const maxDistance = containerRect.width / 2;
+            const maxDistance = Math.max(containerRect.width / 2, 1);
 
-            slides.forEach(slide => {
-                const rect = slide.getBoundingClientRect();
-                const slideCenter = rect.left + rect.width / 2;
+            slides.forEach((slide, index) => {
+                const slideRect = slide.getBoundingClientRect();
+                const slideCenter = slideRect.width
+                    ? (slideRect.left + slideRect.width / 2)
+                    : (containerRect.left + baseTranslate + index * stepWidth + stepWidth / 2);
+
                 const distance = slideCenter - containerCenter;
-
-                let factor = maxDistance > 0 ? Math.abs(distance) / maxDistance : 0;
+                let factor = Math.abs(distance) / maxDistance;
                 if (factor > 1) factor = 1;
 
-                const opacity = 1 - (factor * 0.7);
+                const opacity = Math.max(0.3, 1 - (factor * 0.7));
                 const scale = 1 - (factor * 0.15);
                 const rotateDir = distance > 0 ? 1 : -1;
                 const rotateY = rotateDir * (factor * 35);
@@ -277,7 +291,7 @@ const Ui = {
         this.sliderObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    setWidth = getSetWidth();
+                    syncDimensions();
                     if (!Ui.isAnimating) {
                         Ui.isAnimating = true;
                         Ui.animationFrameId = requestAnimationFrame(updateAnimation);
@@ -290,7 +304,7 @@ const Ui = {
                     }
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.05 });
 
         this.sliderObserver.observe(container);
     },
@@ -337,4 +351,11 @@ const Ui = {
 
 document.addEventListener('DOMContentLoaded', () => {
     Ui.initMobileMenu();
+});
+
+window.addEventListener('languageChanged', () => {
+    const sliderContainer = document.querySelector('.news-slider')?.parentElement;
+    if (sliderContainer && sliderContainer.id && Array.isArray(Ui._lastSliderImages)) {
+        Ui.renderNewsSlider(sliderContainer.id, Ui._lastSliderImages);
+    }
 });

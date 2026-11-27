@@ -1,6 +1,19 @@
 /**
  * Preview.js - Handles PDF and Image Modal Preview (Fixed Download)
  */
+const VERCEL_DOWNLOAD_BASE = 'https://it-batch-portal-frontend-flax.vercel.app/api/download';
+
+function normalizeFileProxyUrl(rawUrl) {
+  if (!rawUrl || typeof rawUrl !== 'string') return rawUrl;
+
+  try {
+    const parsed = new URL(rawUrl, window.location.origin);
+    if (parsed.hostname.endsWith('.workers.dev')) {
+      return `${VERCEL_DOWNLOAD_BASE}${parsed.search}`; } return rawUrl; } catch (e) { return rawUrl.replace( /^https?:\/\/[^/]+\.workers\.dev\/?/i, `${VERCEL_DOWNLOAD_BASE}?`.replace(/\?\?/, '?')
+    );
+  }
+}
+
 const PreviewManager = {
     init() {
         if (!document.getElementById('preview-styles')) {
@@ -52,21 +65,24 @@ const PreviewManager = {
         const previewBody = document.getElementById('preview-body');
         const titleEl = document.getElementById('preview-title');
 
+        const cleanPreviewUrl = normalizeFileProxyUrl(previewUrl);
+        const cleanDownloadUrl = normalizeFileProxyUrl(downloadUrl);
+
         const safeTitle = title || 'معاينة الملف';
         titleEl.textContent = safeTitle;
 
         let ext = '';
         if (fileName && fileName.includes('.')) {
             ext = fileName.split('.').pop().toLowerCase();
-        } else if (previewUrl) {
+        } else if (cleanPreviewUrl) {
             try {
-                const urlObj = new URL(previewUrl);
+                const urlObj = new URL(cleanPreviewUrl, window.location.origin);
                 const nameParam = urlObj.searchParams.get('name');
                 if (nameParam && nameParam.includes('.')) {
                     ext = nameParam.split('.').pop().toLowerCase();
                 }
             } catch (e) {
-                const match = previewUrl.match(/\.([a-zA-Z0-9]+)(?:[\?#]|$)/);
+                const match = cleanPreviewUrl.match(/\.([a-zA-Z0-9]+)(?:[\?#]|$)/);
                 if (match) ext = match[1].toLowerCase();
             }
         }
@@ -75,13 +91,13 @@ const PreviewManager = {
         const isPdf = ext === 'pdf';
         const isImage = !isPdf && (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext) || fileType === 'photo');
 
-        // ⭐️ الرابط المباشر للتحميل (بدون javascript)
-        const directDownloadUrl = previewUrl.replace('mode=preview', 'mode=download');
+        const directDownloadUrl = cleanDownloadUrl
+            || (cleanPreviewUrl ? cleanPreviewUrl.replace('mode=preview', 'mode=download') : '');
 
         if (isImage) {
             previewBody.innerHTML = `
                 <div class="image-preview-wrapper">
-                    <img src="${previewUrl}" alt="${safeTitle}" onerror="window.handleImageError(this)">
+                    <img src="${cleanPreviewUrl}" alt="${safeTitle}" onerror="window.handleImageError(this)">
                     <div class="preview-error-box" style="display:none; flex-direction:column; align-items:center; color:white; text-align:center; padding: 20px; position: absolute;">
                         <i data-lucide="alert-circle" style="width: 64px; height: 64px; margin-bottom: 16px; color: #ef4444;"></i>
                         <h3 style="font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-ar);">فشل تحميل الصورة</h3>
@@ -92,7 +108,7 @@ const PreviewManager = {
         } else if (isPdf) {
             previewBody.innerHTML = `
                 <div class="pdf-preview-wrapper">
-                    <iframe src="${previewUrl}#toolbar=0" title="${safeTitle}"></iframe>
+                    <iframe src="${cleanPreviewUrl}#toolbar=0" title="${safeTitle}"></iframe>
                     <a href="${directDownloadUrl}" class="preview-download-btn" title="تحميل"><i data-lucide="download"></i></a>
                 </div>
             `;
@@ -110,7 +126,7 @@ const PreviewManager = {
                 </div>
             `;
         }
-        
+
         if (window.lucide) lucide.createIcons();
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';

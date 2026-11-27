@@ -1,6 +1,6 @@
 /**
  * Ui.js - DOM Manipulation and Component Rendering (Optimized)
- * ⭐️ نسخة مدمجة: تأثير 3D قوي (كما في كودك الأصلي) + حل جذري لمشكلة الفراغات والرحيل
+ * ⭐️ النسخة النهائية: حل جذري لمشكلة الفراغات والالتفاف اللانهائي (RTL & LTR)
  */
 const Ui = {
     animationFrameId: null, 
@@ -14,7 +14,6 @@ const Ui = {
         return element;
     },
 
-    // دالة القائمة الجانبية للهواتف
     initMobileMenu() {
         const menuBtn = document.getElementById('mobile-menu-btn');
         const closeBtn = document.getElementById('close-menu-btn');
@@ -97,11 +96,11 @@ const Ui = {
         if (totalImages === 1) {
             allImages = [imagesData[0]];
         } else {
-            // ⭐️ سر الجذر: نكرر الصور 4 مرات دائماً لضمان أن الشريط أطول من أي شاشة
-            // هذا يمنع ظهور الفراغ الأيسر أو الأيمن نهائياً
-            allImages = [...imagesData, ...imagesData, ...imagesData, 
-                        ...imagesData, ...imagesData, ...imagesData
-                     ];
+            // ⭐️ نكرر الصور 6 مرات لضمان وجود احتياطي كافٍ في جميع الاتجاهات
+            allImages = [
+                ...imagesData, ...imagesData, ...imagesData, 
+                ...imagesData, ...imagesData, ...imagesData
+            ];
         }
 
         let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}">`;
@@ -152,7 +151,7 @@ const Ui = {
         });
     },
 
-        init3DSlider(container, totalImages, totalSlides) {
+    init3DSlider(container, totalImages, totalSlides) {
         const slider = container.querySelector('.news-slider');
         if (!slider) return;
 
@@ -160,14 +159,18 @@ const Ui = {
         if (slides.length === 0) return;
 
         const isRTL = document.documentElement.dir === 'rtl';
-        const setWidth = totalImages * 336; // عرض مجموعة واحدة من الصور
+        
+        // ⭐️ حساب عرض المجموعة الواحدة ديناميكياً لضمان الدقة مهما تغير حجم الشاشة
+        const slideWidth = slides[0].offsetWidth;
+        const gap = parseInt(window.getComputedStyle(slider).gap) || 0;
+        const setWidth = (slideWidth + gap) * totalImages;
 
         let isDragging = false;
         let startX = 0;
-        let autoScrollSpeed = 0.5; // سرعة الحركة التلقائية
+        let autoScrollSpeed = 0.5; 
         
-        // نبدأ من المنتصف لضمان وجود صور على اليمين واليسار
-        let baseTranslate = isRTL ? -setWidth : -setWidth;
+        // البداية دائماً من المجموعة الثالثة (المنتصف) لضمان وجود صور على اليمين واليسار
+        let baseTranslate = -2 * setWidth;
 
         slider.addEventListener('pointerdown', (e) => {
             isDragging = true;
@@ -197,15 +200,13 @@ const Ui = {
                 else baseTranslate -= autoScrollSpeed;
             }
 
-            // ⭐️ السحر الحقيقي: نظام الالتفاف اللانهائي (Infinite Loop Math)
-            // نضمن أن الشريط يبقى دائماً في المنتصف (بين المجموعة الثانية والثالثة)
-            // بغض النظر عن مقدار السحب، لن تظهر أي مساحة فارغة أبداً
-            if (isRTL) {
-                if (baseTranslate > 0) baseTranslate -= setWidth;
-                else if (baseTranslate < -2 * setWidth) baseTranslate += setWidth;
-            } else {
-                if (baseTranslate < -2 * setWidth) baseTranslate += setWidth;
-                else if (baseTranslate > -setWidth) baseTranslate -= setWidth;
+            // ⭐️ الحل النهائي للالتفاف اللانهائي (يمنع الفراغ في كل الاتجاهات)
+            // نستخدم while لضمان إعادة التموضع فوراً حتى لو سحب المستخدم بسرعة جنونية
+            while (baseTranslate > -1 * setWidth) {
+                baseTranslate -= setWidth;
+            }
+            while (baseTranslate < -4 * setWidth) {
+                baseTranslate += setWidth;
             }
 
             slider.style.transform = `translate3d(${baseTranslate}px, 0, 0)`;
@@ -257,6 +258,7 @@ const Ui = {
 
         this.sliderObserver.observe(container);
     },
+
     renderNews(containerId, newsData) {
         const container = document.getElementById(containerId);
         if (!container) return;

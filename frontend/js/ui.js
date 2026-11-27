@@ -1,6 +1,6 @@
 /**
  * Ui.js - DOM Manipulation and Component Rendering (Optimized)
- * النسخة النهائية: تطابق كامل بين العربية والإنجليزية بدون فراغات أو التفاف خاطئ
+ * النسخة النهائية: تطابق كامل بين العربية والإنجليزية + تمرير لمس سلس في الهاتف
  */
 const Ui = {
     animationFrameId: null,
@@ -61,6 +61,7 @@ const Ui = {
         }
         if (this.sliderPointerUpHandler) {
             window.removeEventListener('pointerup', this.sliderPointerUpHandler);
+            window.removeEventListener('pointercancel', this.sliderPointerUpHandler);
             this.sliderPointerUpHandler = null;
         }
         this.isAnimating = false;
@@ -113,6 +114,7 @@ const Ui = {
 
         container.style.direction = 'ltr';
         container.style.overflow = 'hidden';
+        container.style.touchAction = 'pan-y';
 
         const totalImages = imagesData.length;
         let allImages = [];
@@ -126,13 +128,13 @@ const Ui = {
             ];
         }
 
-        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}" dir="ltr" style="display:flex;flex-direction:row;align-items:center;width:max-content;direction:ltr;">`;
+        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}" dir="ltr" style="display:flex;flex-direction:row;align-items:center;width:max-content;direction:ltr;touch-action:pan-y;">`;
         allImages.forEach(img => {
             const safeName = String(img.name || 'image').replace(/'/g, "\\'");
             const previewUrl = img.previewUrl || img.imageUrl || '';
             const downloadUrl = img.downloadUrl || (previewUrl ? previewUrl.replace('mode=preview', 'mode=download') : '');
             html += `
-                <div class="news-slide" data-url="${previewUrl}" data-download="${downloadUrl}" data-name="${safeName}" style="flex-shrink:0;">
+                <div class="news-slide" data-url="${previewUrl}" data-download="${downloadUrl}" data-name="${safeName}" style="flex-shrink:0;touch-action:pan-y;">
                     <img src="${img.imageUrl}" alt="${safeName}" loading="eager" decoding="async" onerror="this.style.opacity='0';">
                 </div>
             `;
@@ -159,7 +161,7 @@ const Ui = {
             slide.addEventListener('pointerdown', (e) => {
                 pointerStartX = e.clientX;
                 pointerStartY = e.clientY;
-            });
+            }, { passive: true });
 
             slide.addEventListener('click', (e) => {
                 const distX = Math.abs(e.clientX - pointerStartX);
@@ -195,8 +197,12 @@ const Ui = {
 
         let stepWidth = getStepWidth();
         let setWidth = stepWidth * totalImages;
+        let isPointerActive = false;
         let isDragging = false;
+        let hasDecided = false;
         let startX = 0;
+        let startY = 0;
+        let dragOffsetX = 0;
         const autoScrollSpeed = 0.5;
         let baseTranslate = -2 * setWidth;
 
@@ -212,24 +218,53 @@ const Ui = {
         window.addEventListener('resize', this.sliderResizeHandler);
 
         slider.addEventListener('pointerdown', (e) => {
-            isDragging = true;
-            startX = e.clientX - baseTranslate;
-            slider.style.cursor = 'grabbing';
-        });
+            if (e.button !== 0 && e.pointerType === 'mouse') return;
+            isPointerActive = true;
+            isDragging = false;
+            hasDecided = false;
+            startX = e.clientX;
+            startY = e.clientY;
+            dragOffsetX = e.clientX - baseTranslate;
+        }, { passive: true });
 
         this.sliderPointerMoveHandler = (e) => {
-            if (!isDragging) return;
-            baseTranslate = e.clientX - startX;
+            if (!isPointerActive) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            if (!hasDecided) {
+                if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+                hasDecided = true;
+
+                // إذا كانت الحركة عمودية، نطلق السحب فوراً لكي يمرر الهاتف الصفحة بسلاسة
+                if (Math.abs(dy) > Math.abs(dx)) {
+                    isPointerActive = false;
+                    isDragging = false;
+                    return;
+                }
+
+                isDragging = true;
+                dragOffsetX = e.clientX - baseTranslate;
+                slider.style.cursor = 'grabbing';
+            }
+
+            if (isDragging) {
+                baseTranslate = e.clientX - dragOffsetX;
+            }
         };
-        window.addEventListener('pointermove', this.sliderPointerMoveHandler);
+        window.addEventListener('pointermove', this.sliderPointerMoveHandler, { passive: true });
 
         this.sliderPointerUpHandler = () => {
+            isPointerActive = false;
+            hasDecided = false;
             if (isDragging) {
                 isDragging = false;
                 slider.style.cursor = 'grab';
             }
         };
-        window.addEventListener('pointerup', this.sliderPointerUpHandler);
+        window.addEventListener('pointerup', this.sliderPointerUpHandler, { passive: true });
+        window.addEventListener('pointercancel', this.sliderPointerUpHandler, { passive: true });
 
         slider.addEventListener('dragstart', (e) => e.preventDefault());
         slider.style.cursor = 'grab';

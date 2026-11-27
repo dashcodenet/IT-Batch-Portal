@@ -397,27 +397,29 @@
 .type-exam { background: rgba(220, 38, 38, 0.1); color: var(--color-danger); }
 
 /* ==========================================================================
-   Interactive 3D News Slider (Drag & Swipe Enabled)
+   Interactive 3D News Slider (النسخة المطابقة للموقع القديم)
    ========================================================================== */
 .news-slider-wrapper {
-       width: 100%;
+    width: 100%;
     overflow: hidden;
     position: relative;
     padding: var(--space-6) 0;
-    /* ⭐️ إزالة mask-image الذي كان يخفي الأطراف */
-    -webkit-mask-image: none; 
-    mask-image: none;
+    perspective: 1200px; /* ⭐️ يعطي إحساس العمق 3D */
+    
+    /* ⭐️ تأثير التلاشي عند الأطراف اليمين واليسار */
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .news-slider {
     display: flex;
-    gap: var(--space-4);
+    gap: var(--space-4); /* ⭐️ إرجاع المسافات بين الصور */
     width: max-content;
     transform-style: preserve-3d;
     cursor: grab;
     user-select: none;
     touch-action: pan-y;
-    will-change: transform; /* تسريع معالجة الشريط */
+    will-change: transform;
 }
 
 .news-slider:active {
@@ -439,17 +441,16 @@
     width: 320px;
     height: 220px;
     flex-shrink: 0;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-lg); /* ⭐️ إرجاع الحواف الدائرية */
     overflow: hidden;
     border: 1px solid var(--color-border);
     position: relative;
     background: var(--color-surface);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); 
     
-    /* الحل السحري: إزالة transform من transition لمنع الصراع مع الجافاسكربت */
+    /* إزالة transform من هنا لمنع الصراع مع حركة الجافاسكربت */
     transition: opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     
-    /* تسريع معالجة كرت الشاشة ومنع الرمشة */
     will-change: transform, opacity;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -462,7 +463,6 @@
     pointer-events: none; 
     user-drag: none;
     -webkit-user-drag: none;
-    /* إضافة will-change للصورة أيضاً */
     will-change: transform;
 }
 
@@ -656,75 +656,28 @@
     line-height: 1.6;
     font-size: 0.95rem;
 }
-/* ==========================================================================
-   News Slider (3D Carousel) Styles
-   ========================================================================== */
-.news-slider-wrapper {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-    padding: var(--space-6) 0;
-    display: flex;
-    justify-content: center;
-    perspective: 1200px; /* لتفعيل التأثير ثلاثي الأبعاد */
-}
 
-.news-slider {
-    display: flex;
-    gap: 0; /* ⭐️ إلغاء الفراغ */
-    width: max-content;
-    transform-style: preserve-3d;
-    align-items: center;
-}
-
-.news-slide {
-    width: 320px;
-    height: 220px;
-    margin: 0; /* ⭐️ إلغاء الهوامش */
-    border-radius: 0; /* ⭐️ إلغاء الحواف الدائرية لتلتصق ببعضها */
-    flex-shrink: 0;
-    overflow: hidden;
-    position: relative;
-    border-left: 1px solid rgba(255,255,255,0.1); /* خط خفيف جداً للفصل بين الصور */
-}
-
-.news-slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    pointer-events: none; /* لمنع المتصفح من سحب الصورة بدلاً من السلايدر */
-}
 /* ==========================================================================
    Sticky File Header (شريط البحث وزر العودة العائم)
    ========================================================================== */
 .sticky-file-header {
     position: sticky;
-    /* ⭐️ يثبت تحت الهيدر الرئيسي. نستخدم 70px كقيمة احتياطية إذا لم يكن المتغير موجوداً */
     top: var(--header-height, 70px); 
-    z-index: 45; /* أقل من الهيدر الرئيسي (50) حتى لا يغطيه */
-    
-    /* خلفية داكنة لتغطية الملفات أثناء التمرير */
+    z-index: 45; 
     background: var(--color-bg); 
-    
-    /* مساحات داخلية وخارجية */
     padding-top: var(--space-3);
     padding-bottom: var(--space-4);
     margin-bottom: var(--space-4);
-    
-    /* حدود وظل سفلي للفصل بين الشريط والملفات */
     border-bottom: 1px solid var(--color-border);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    
-    /* تأثير الزجاج (اختياري - يمكنك حذفه إذا أردت خلفية صلبة تماماً) */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    background: rgba(15, 23, 42, 0.95); /* لون الخلفية الداكنة مع شفافية بسيطة */
+    background: rgba(15, 23, 42, 0.95); 
 }
 
-/* تعديل بسيط للهواتف للتأكد من أن كل شيء متناسق */
 @media (max-width: 768px) {
     .sticky-file-header {
-        top: 60px; /* قد يكون الهيدر في الهاتف أقصر قليلاً */
+        top: 60px; 
         padding-top: var(--space-2);
         padding-bottom: var(--space-3);
     }
@@ -738,20 +691,18 @@
         font-size: 1.1rem !important;
     }
 }
+
 /* ==========================================================================
    Sticky Search & Back Button (تثبيت ذكي)
    ========================================================================== */
 #sticky-controls {
     position: -webkit-sticky;
     position: sticky;
-    /* ⭐️ تثبت تحت الهيدر بمقدار ارتفاعه (70 بكسل كاحتياط) */
     top: var(--header-height, 70px) !important; 
     z-index: 45;
-    
-    background: rgba(15, 23, 42, 0.95); /* لون داكن يغطي الملفات خلفه */
+    background: rgba(15, 23, 42, 0.95); 
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    
     padding: var(--space-3) 0 var(--space-4) 0;
     margin-bottom: var(--space-4);
     border-bottom: 1px solid var(--color-border);
@@ -760,7 +711,7 @@
 
 @media (max-width: 768px) {
     #sticky-controls {
-        top: 60px !important; /* تعديل بسيط للهواتف */
+        top: 60px !important; 
         padding: var(--space-2) 0 var(--space-3) 0;
     }
     #sticky-controls .section-title {

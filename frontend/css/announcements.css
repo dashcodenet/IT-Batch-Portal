@@ -1,0 +1,6 @@
+.ann-card { padding: 20px; border-inline-start: 4px solid var(--color-primary); }
+.ann-card.level-high { border-inline-start-color: var(--color-error); }
+.ann-card.level-medium { border-inline-start-color: var(--color-warning); }
+.ann-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 8px; }
+.ann-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+.ann-card p { font-size: 0.95rem; color: var(--color-text-secondary); }

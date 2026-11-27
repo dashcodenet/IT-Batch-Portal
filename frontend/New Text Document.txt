@@ -1,0 +1,444 @@
+python -m http.server 3000
+
+
+
+
+
+
+frontend/
+│
+├── index.html
+├── materials.html
+├── files.html
+├── news.html
+├── announcements.html
+├── services.html
+├── about.html
+├── schedule.html          (إذا كنت لا تزال تستخدمه)
+├── 404.html               (لصفحة الخطأ)
+├── offline.html           (لصفحة انقطاع الإنترنت)
+├── manifest.json          (لإعدادات الـ PWA)
+├── sw.js                  (للكاش والعمل بدون إنترنت)
+│
+├── css/
+│   ├── fonts.css          (تعريف الخطوط المحلية)
+│   ├── variables.css      (الألوان والمسافات)
+│   ├── reset.css          (تصفير إعدادات المتصفح)
+│   ├── main.css           (تنسيقات عامة والهيرو)
+│   ├── components.css     (الأزرار، البطاقات، التنبيهات)
+│   ├── responsive.css     (تصميم الجوال والقائمة الجانبية)
+│   └── pages.css          (تنسيقات الصفحات: المواد، الملفات، شريط الأخبار)
+│
+├── js/
+│   ├── config.js          (رابط السيرفر، التوكن)
+│   ├── cache.js           (كاش المتصفح المحلي)
+│   ├── error-handler.js   (التعامل مع الأخطاء)
+│   ├── toast.js           (الإشعارات المنبثقة)
+│   ├── api.js             (الاتصال بالسيرفر)
+│   ├── i18n.js            (محرك الترجمة)
+│   ├── lang-switcher.js   (زر تبديل اللغة)
+│   ├── theme-toggle.js    (زر الوضع الليلي/النهاري)
+│   ├── layout.js          (⭐ الجديد: يحقن الهيدر، الفوتر، والقائمة الجانبية)
+│   ├── ui.js              (محرك السحب 3D، وتشغيل القائمة الجانبية)
+│   ├── main.js            (المنطق الخاص بالصفحة الرئيسية فقط)
+│   ├── materials.js       (المنطق الخاص بصفحة المواد)
+│   ├── files.js           (المنطق الخاص بصفحة الملفات)
+│   ├── favorites.js       (نظام المفضلة)
+│   ├── preview.js         (شاشة المعاينة للصور والـ PDF)
+│   ├── search.js          (البحث الفوري)
+│   ├── news.js            (المنطق الخاص بصفحة الأخبار)
+│   ├── announcements.js   (المنطق الخاص بصفحة الإعلانات)
+│   ├── pwa.js             (تفعيل الـ Service Worker)
+│   └── lucide.min.js      (مكتبة الأيقونات المحلية)
+│
+├── locales/
+│   ├── ar.json            (ترجمات اللغة العربية)
+│   └── en.json            (ترجمات اللغة الإنجليزية)
+│
+└── assets/
+    ├── fonts/             (ملفات الخطوط Cairo و Inter)
+    ├── icons/             (أيقونات إضافية إن وجدت)
+    └── images/
+        ├── hero-bg.jpg    (خلفية الواجهة)
+        ├── logo-ar.svg
+        └── 
+
+
+
+
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git config --global user.name "dashcodenet"
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git config --global user.email "dashcode.net@gmail.com"
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git add .
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git commit -m "Initial commit"
+[main 513cc59] Initial commit
+ 3 files changed, 98 insertions(+), 179 deletions(-)
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git push
+Enumerating objects: 17, done.
+Counting objects: 100% (17/17), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (9/9), 2.83 KiB | 362.00 KiB/s, done.
+Total 9 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To https://github.com/dashcodenet/IT-Batch-Portal.git
+   6114c58..513cc59  main -> main
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>
+
+
+
+Microsoft Windows [Version 10.0.19045.6466]
+(c) Microsoft Corporation. All rights reserved.
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>tree /f
+Folder PATH listing for volume Data Files
+Volume serial number is D01C-179B
+D:.
+│   .editorconfig
+│   .gitignore
+│   LICENSE
+│   netlify.toml
+│   package.json
+│   README.ar.md
+│   README.en.md
+│   README.md
+│   vercel.json
+│   {
+│
+├───.github
+│   └───workflows
+│           deploy.yml
+│           static.yml
+│
+├───apps-script
+│       AnnouncementService.gs
+│       appsscript.json
+│       CacheService.gs
+│       Code.gs
+│       Config.gs
+│       DriveService.gs
+│       i18n.gs
+│       NewsService.gs
+│       README.md
+│       ScheduleService.gs
+│       SearchService.gs
+│       StatsService.gs
+│       Utils.gs
+│
+├───docs
+│       API-REFERENCE.md
+│       CHANGELOG.md
+│       CONTRIBUTING.md
+│       DEPLOYMENT.md
+│       DRIVE-STRUCTURE.md
+│       I18N-GUIDE.md
+│       NAMING-RULES.md
+│       SECURITY.md
+│       TROUBLESHOOTING.md
+│
+├───frontend
+│   │   404.html
+│   │   about.html
+│   │   announcements.html
+│   │   contact.html
+│   │   favicon.ico
+│   │   favorites.html
+│   │   files.html
+│   │   index.html
+│   │   manifest.json
+│   │   materials.html
+│   │   New Text Document.txt
+│   │   news.html
+│   │   offline.html
+│   │   services.html
+│   │   sw.js
+│   │
+│   ├───api
+│   │       download.js
+│   │
+│   ├───assets
+│   │   ├───fonts
+│   │   │   ├───cairo
+│   │   │   │       Cairo-Bold.woff2
+│   │   │   │       Cairo-Regular.woff2
+│   │   │   │       Cairo-SemiBold.woff2
+│   │   │   │
+│   │   │   └───inter
+│   │   │           Inter-Bold.woff2
+│   │   │           Inter-Regular.woff2
+│   │   │           Inter-SemiBold.woff2
+│   │   │
+│   │   ├───icons
+│   │   │       arrow-left.svg
+│   │   │       arrow-right.svg
+│   │   │       bell.svg
+│   │   │       calendar.svg
+│   │   │       close.svg
+│   │   │       download.svg
+│   │   │       globe.svg
+│   │   │       heart.svg
+│   │   │       menu.svg
+│   │   │       moon.svg
+│   │   │       news.svg
+│   │   │       pin.svg
+│   │   │       preview.svg
+│   │   │       refresh.svg
+│   │   │       search.svg
+│   │   │       sun.svg
+│   │   │
+│   │   └───images
+│   │       │   logo-ar.svg
+│   │       │   logo-en.svg
+│   │       │   og-image.png
+│   │       │   placeholder.png
+│   │       │   windows-11-blue-abstract-flower-4k-wallpaper-card.png
+│   │       │
+│   │       └───news
+│   │               1.png
+│   │               2.jpeg
+│   │               3.png
+│   │               4.png
+│   │
+│   ├───css
+│   │       animations.css
+│   │       announcements.css
+│   │       components.css
+│   │       dark-mode.css
+│   │       ltr.css
+│   │       main.css
+│   │       news.css
+│   │       pages.css
+│   │       reset.css
+│   │       responsive.css
+│   │       rtl.css
+│   │       schedule.css
+│   │       search.css
+│   │       toast.css
+│   │       variables.css
+│   │       whats-new.css
+│   │
+│   ├───js
+│   │       announcements.js
+│   │       api.js
+│   │       cache.js
+│   │       config.js
+│   │       error-handler.js
+│   │       favorites-page.js
+│   │       favorites.js
+│   │       files.js
+│   │       i18n.js
+│   │       lang-switcher.js
+│   │       layout.js
+│   │       lucide.min.js
+│   │       main.js
+│   │       materials.js
+│   │       news.js
+│   │       preview.js
+│   │       pwa.js
+│   │       refresh.js
+│   │       router.js
+│   │       schedule.js
+│   │       search.js
+│   │       spa.js
+│   │       theme-toggle.js
+│   │       toast.js
+│   │       ui.js
+│   │       whats-new.js
+│   │
+│   ├───locales
+│   │       ar.json
+│   │       en.json
+│   │       README.md
+│   │
+│   └───pages
+│           faq.html
+│           privacy.html
+│           team.html
+│
+├───netlify
+│   └───functions
+│           bot.js
+│           download.js
+│
+└───samples
+    ├───announcements
+    │   │   ann-001.json
+    │   │   ann-002.json
+    │   │
+    │   └───images
+    │           ann-001.jpg
+    │
+    ├───news
+    │   │   news-001.json
+    │   │   news-002.json
+    │   │
+    │   └───images
+    │           news-001.jpg
+    │
+    └───schedule
+            schedule-year-1-term-1.json
+            schedule-year-1-term-2.json
+
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git add .
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git commit -m "Initial commit"
+[main 19d4ffd] Initial commit
+ 1 file changed, 61 insertions(+), 6 deletions(-)
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git push
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (5/5), 2.29 KiB | 468.00 KiB/s, done.
+Total 5 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote:
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote:
+remote:     - Push cannot contain secrets
+remote:
+remote:
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:
+remote:
+remote:       —— GitHub Personal Access Token ——————————————————————
+remote:        locations:
+remote:          - commit: 19d4ffd266189688d0a4a09972542de41f167b9e
+remote:            path: frontend/api/download.js:5
+remote:
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/dashcodenet/IT-Batch-Portal/security/secret-scanning/unblock-secret/3MZ1dBeUbfP8vXJnw7AWwOcyqj7
+remote:
+remote:
+remote:
+To https://github.com/dashcodenet/IT-Batch-Portal.git
+ ! [remote rejected] main -> main (error: GH013: Repository rule violations found for refs/heads/main.
+
+- GITHUB PUSH PROTECTION
+  —————————————————————————————————————————
+    Resolve the following violations before pushing again
+
+    - Push cannot contain secrets
+
+
+     (?) Learn how to resolve a blocked push
+     https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+
+
+      —— GitHub Personal Access Token ——————————————————————
+       locations:
+         - commit: 19d4ffd266189688d0a4a09972542de41f167b9e
+           path: frontend/api/download.js:5
+
+       (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+       https://github.com/dashcodenet/IT-Batch-Portal/security/secret-scanning/unblock-secret/3MZ1dBeUbfP8vXJnw7AWwOcyqj7
+
+
+
+)
+error: failed to push some refs to 'https://github.com/dashcodenet/IT-Batch-Portal.git'
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git add frontend/api/download.js
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git commit --amend -m "Initial commit"
+[main 694eea3] Initial commit
+ Date: Tue Nov 24 21:02:24 2026 +0300
+ 1 file changed, 61 insertions(+), 6 deletions(-)
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git push --force-with-lease origin main
+fatal: unable to access 'https://github.com/dashcodenet/IT-Batch-Portal.git/': Could not resolve host: github.com
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>ipconfig /flushdns
+
+Windows IP Configuration
+
+Successfully flushed the DNS Resolver Cache.
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>ping github.com
+
+Pinging github.com [140.82.121.4] with 32 bytes of data:
+Reply from 140.82.121.4: bytes=32 time=181ms TTL=49
+Reply from 140.82.121.4: bytes=32 time=175ms TTL=49
+Reply from 140.82.121.4: bytes=32 time=177ms TTL=49
+Reply from 140.82.121.4: bytes=32 time=199ms TTL=49
+
+Ping statistics for 140.82.121.4:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 175ms, Maximum = 199ms, Average = 183ms
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git config --global --unset http.proxy
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git config --global --unset https.proxy
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>git push --force-with-lease origin main
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (5/5), 2.29 KiB | 586.00 KiB/s, done.
+Total 5 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote:
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote:
+remote:     - Push cannot contain secrets
+remote:
+remote:
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:
+remote:
+remote:       —— GitHub Personal Access Token ——————————————————————
+remote:        locations:
+remote:          - commit: 694eea32424b47f0ca8bce7ccc11dd138ce6b6c4
+remote:            path: frontend/api/download.js:5
+remote:
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/dashcodenet/IT-Batch-Portal/security/secret-scanning/unblock-secret/3MZ1dBeUbfP8vXJnw7AWwOcyqj7
+remote:
+remote:
+remote:
+To https://github.com/dashcodenet/IT-Batch-Portal.git
+ ! [remote rejected] main -> main (error: GH013: Repository rule violations found for refs/heads/main.
+
+- GITHUB PUSH PROTECTION
+  —————————————————————————————————————————
+    Resolve the following violations before pushing again
+
+    - Push cannot contain secrets
+
+
+     (?) Learn how to resolve a blocked push
+     https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+
+
+      —— GitHub Personal Access Token ——————————————————————
+       locations:
+         - commit: 694eea32424b47f0ca8bce7ccc11dd138ce6b6c4
+           path: frontend/api/download.js:5
+
+       (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+       https://github.com/dashcodenet/IT-Batch-Portal/security/secret-scanning/unblock-secret/3MZ1dBeUbfP8vXJnw7AWwOcyqj7
+
+
+
+)
+error: failed to push some refs to 'https://github.com/dashcodenet/IT-Batch-Portal.git'
+
+D:\Work_Projects\Web_Development\Murad\IT-Batch-Portal>
+

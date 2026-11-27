@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Batch Portal | بوابة تكنولوجيا المعلومات</title>
+
+    <!-- ⭐️ سكربت منع الرمشة وتثبيت الإعدادات -->
+    <style>
+        html {
+            background-color: #0F172A !important;
+            color-scheme: dark !important;
+        }
+        body {
+            background-color: #0F172A !important;
+            margin: 0;
+        }
+    </style>
+    <script>
+        (function() {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+            const savedLang = localStorage.getItem('itp_lang') || 'en';
+            document.documentElement.lang = savedLang;
+            document.documentElement.dir = savedLang === 'ar' ? 'rtl' : 'ltr';
+        })();
+    </script>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1E40AF">
+    
+    <!-- Preload Hero Image -->
+    <link rel="preload" as="image" href="assets/images/windows-11-blue-abstract-flower-4k-wallpaper-card.png">
+
+    <!-- Fonts (Local) -->
+    <!-- ⭐️ استدعاء خط Cairo من جوجل -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons (Local) -->
+    <script src="js/lucide.min.js" defer></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/whats-new.css">
+    <link rel="stylesheet" href="css/toast.css">
+</head>
+<body class="lang-en">
+
+    <!-- ⭐️ الهيدر والفوتر والقائمة الجانبية سيتم حقنهم تلقائياً عبر layout.js -->
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" style="background-image: url('assets/images/windows-11-blue-abstract-flower-4k-wallpaper-card.png'); background-size: cover; background-position: center;">
+            <div class="container">
+                <div class="hero-glass">
+                    <h1>بوابة تكنولوجيا المعلومات</h1>
+                    <p data-i18n="hero.subtitle">كل ما تحتاجه لدورتك الأكاديمية، في مكان واحد</p>
+                    <div class="hero-buttons">
+                        <a href="materials.html" class="btn btn-primary">
+                            <i data-lucide="archive"></i> <span data-i18n="hero.btn_materials">الدخول إلى الأرشيف</span>
+                        </a>
+                        <a href="services.html" class="btn btn-secondary">
+                            <i data-lucide="layout-grid"></i> <span data-i18n="hero.btn_services">خدماتنا</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. News Slider Section -->
+        <section class="container" style="padding-bottom: var(--space-8);">
+            <div class="section-title">
+                <span data-i18n="nav.news">التعليمات والأخبار</span>
+                <a href="news.html" class="nav-link" style="font-size:1rem;color:var(--color-primary);" data-i18n="home.view_all">عرض الكل ←</a>
+            </div>
+            <div id="news-slider-container" class="news-slider-wrapper">
+                <!-- Rendered by JS -->
+            </div>
+        </section>
+
+        <!-- 2. Archive Section -->
+        <section class="container" style="padding-bottom: var(--space-8);">
+            <h2 class="section-title" data-i18n="nav.archive">الأرشيف</h2>
+            <div id="years-grid" class="grid-4">
+                <!-- Rendered by JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- JS Scripts -->
+       <!-- 1. الإعدادات والأساسيات (Config & Core) -->
+    <script src="js/config.js?v=116" defer></script>
+    <script src="js/cache.js?v=116" defer></script>
+    <script src="js/error-handler.js?v=116" defer></script>
+    
+    <!-- 2. المكونات الأساسية (Utilities & API) -->
+    <script src="js/toast.js?v=120" defer></script>
+    <script src="js/api.js?v=117" defer></script>
+    
+    <!-- 3. اللغة والترجمة (Translation) -->
+    <script src="js/i18n.js?v=116" defer></script>
+    <script src="js/lang-switcher.js?v=116" defer></script>
+    
+    <!-- 4. الواجهة والتصميم (UI & Layout) -->
+    <script src="js/layout.js?v=116" defer></script>
+    <script src="js/preview.js?v=116" defer></script>
+    <script src="js/ui.js?v=116" defer></script>
+    
+    <!-- 5. الملفات الرئيسية والتطبيق (Main App & PWA) -->
+    <script src="js/main.js?v=116" defer></script>
+    <script src="js/pwa.js?v=116" defer></script>
+    <script src="js/spa.js?v=116" defer></script>
+    
+    <!-- 6. الإشعارات (يجب أن تأتي في النهاية لأنها تعتمد على كل ما سبق) -->
+    <script src="js/whats-new.js?v=134" defer></script>
+    <!-- Initialize Lucide Icons -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

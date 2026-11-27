@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فريق المشرفين — بوابة دفعة IT</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/dark-mode.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/rtl.css">
+  <link rel="stylesheet" href="/css/ltr.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <style>
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--space-4);
+    }
+    .member-card {
+      text-align: center;
+      padding: var(--space-6) var(--space-4);
+    }
+    .member-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto var(--space-3);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: #fff;
+      font-weight: 700;
+      box-shadow: var(--shadow-md);
+    }
+    .member-name {
+      font-size: var(--text-lg);
+      font-weight: 700;
+      margin-bottom: var(--space-1);
+    }
+    .member-role {
+      font-size: var(--text-sm);
+      color: var(--color-primary);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    .member-desc {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+    .member-contact {
+      display: flex;
+      gap: var(--space-2);
+      justify-content: center;
+      margin-top: var(--space-3);
+    }
+    .member-contact a {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--color-bg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-base);
+      transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+    .member-contact a:hover {
+      background: var(--color-primary-light);
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <img src="/assets/images/logo-ar.svg" alt="IT Portal" id="logo-img">
+        <span data-i18n="site.title">بوابة دفعة IT</span>
+      </a>
+      <div class="header-actions">
+        <button id="theme-btn" class="icon-btn" aria-label="الوضع الليلي"></button>
+        <button id="lang-btn" class="icon-btn" aria-label="تبديل اللغة">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title" data-i18n="team.title">فريق المشرفين</h1>
+      <p style="color:var(--color-text-secondary);margin-bottom:var(--space-6);" data-i18n="team.subtitle">
+        الفريق الذي يعمل على تنظيم المحتوى وتطوير البوابة
+      </p>
+
+      <div class="team-grid">
+
+        <!-- عضو 1 -->
+        <article class="card member-card">
+          <div class="member-avatar">أ</div>
+          <h3 class="member-name">أحمد محمد</h3>
+          <p class="member-role" data-i18n="team.role.admin">مشرف الدفعة</p>
+          <p class="member-desc" data-i18n="team.desc.admin">مسؤول عن تنظيم المحتوى ومتابعة كل ما يخص الدفعة.</p>
+          <div class="member-contact">
+            <a href="mailto:ahmed@example.com" title="البريد">📧</a>
+            <a href="https://wa.me/967xxxxxxxxx" title="واتساب">💬</a>
+          </div>
+        </article>
+
+        <!-- عضو 2 -->
+        <article class="card member-card">
+          <div class="member-avatar">س</div>
+          <h3 class="member-name">سارة علي</h3>
+          <p class="member-role" data-i18n="team.role.content">مسؤولة المحتوى</p>
+          <p class="member-desc" data-i18n="team.desc.content">تتولى رفع المحاضرات والملخصات وتنظيمها في Drive.</p>
+          <div class="member-contact">
+            <a href="mailto:sara@example.com" title="البريد">📧</a>
+            <a href="https://t.me/xxxxx" title="تيليجرام">✈️</a>
+          </div>
+        </article>
+
+        <!-- عضو 3 -->
+        <article class="card member-card">
+          <div class="member-avatar">م</div>
+          <h3 class="member-name">محمد صالح</h3>
+          <p class="member-role" data-i18n="team.role.dev">المطور التقني</p>
+          <p class="member-desc" data-i18n="team.desc.dev">مسؤول عن تطوير الموقع وصيانته تقنياً.</p>
+          <div class="member-contact">
+            <a href="mailto:dev@example.com" title="البريد">📧</a>
+            <a href="https://github.com/xxxxx" title="GitHub">💻</a>
+          </div>
+        </article>
+
+        <!-- عضو 4 -->
+        <article class="card member-card">
+          <div class="member-avatar">ن</div>
+          <h3 class="member-name">نور الهدى</h3>
+          <p class="member-role" data-i18n="team.role.support">الدعم الفني</p>
+          <p class="member-desc" data-i18n="team.desc.support">تستقبل اقتراحات الطلاب وملاحظاتهم.</p>
+          <div class="member-contact">
+            <a href="mailto:support@example.com" title="البريد">📧</a>
+            <a href="https://wa.me/967xxxxxxxxx" title="واتساب">💬</a>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- دعوة للانضمام -->
+      <div class="card" style="margin-top:var(--space-8);text-align:center;padding:var(--space-8);">
+        <h3 style="margin-bottom:var(--space-2);" data-i18n="team.join">هل تريد الانضمام للفريق؟</h3>
+        <p style="color:var(--color-text-secondary);margin-bottom:var(--space-4);" data-i18n="team.joinDesc">
+          نرحب بمن لديه اقتراح أو يريد المساعدة في تنظيم المحتوى.
+        </p>
+        <a href="/contact.html" class="btn btn-primary" style="padding:var(--space-3) var(--space-6);" data-i18n="nav.contact">تواصل معنا</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© <span id="year"></span> <span data-i18n="site.title">بوابة دفعة IT</span></p>
+      <div class="footer-links">
+        <a href="/about.html" data-i18n="nav.about">عن المشروع</a>
+        <a href="/contact.html" data-i18n="nav.contact">تواصل</a>
+        <a href="/pages/team.html" data-i18n="team.title">الفريق</a>
+        <a href="/pages/faq.html" data-i18n="faq.title">الأسئلة الشائعة</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/theme-toggle.js"></script>
+  <script src="/js/lang-switcher.js"></script>
+  <script src="/js/main.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

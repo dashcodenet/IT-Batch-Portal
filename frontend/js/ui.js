@@ -1,15 +1,11 @@
 /**
  * Ui.js - DOM Manipulation and Component Rendering (Optimized)
- * النسخة النهائية: تطابق كامل بين العربية والإنجليزية + تمرير لمس سلس في الهاتف
+ * ⭐️ النسخة النهائية: حل جذري لمشكلة الفراغات والالتفاف اللانهائي (RTL & LTR)
  */
 const Ui = {
-    animationFrameId: null,
+    animationFrameId: null, 
     isAnimating: false,
     sliderObserver: null,
-    sliderResizeHandler: null,
-    sliderPointerMoveHandler: null,
-    sliderPointerUpHandler: null,
-    _lastSliderImages: null,
 
     el(tag, className = '', innerHTML = '') {
         const element = document.createElement(tag);
@@ -42,40 +38,15 @@ const Ui = {
         overlay.addEventListener('click', closeMenu);
     },
 
-    cleanupSlider() {
-        if (this.animationFrameId) {
-            cancelAnimationFrame(this.animationFrameId);
-            this.animationFrameId = null;
-        }
-        if (this.sliderObserver) {
-            this.sliderObserver.disconnect();
-            this.sliderObserver = null;
-        }
-        if (this.sliderResizeHandler) {
-            window.removeEventListener('resize', this.sliderResizeHandler);
-            this.sliderResizeHandler = null;
-        }
-        if (this.sliderPointerMoveHandler) {
-            window.removeEventListener('pointermove', this.sliderPointerMoveHandler);
-            this.sliderPointerMoveHandler = null;
-        }
-        if (this.sliderPointerUpHandler) {
-            window.removeEventListener('pointerup', this.sliderPointerUpHandler);
-            window.removeEventListener('pointercancel', this.sliderPointerUpHandler);
-            this.sliderPointerUpHandler = null;
-        }
-        this.isAnimating = false;
-    },
-
     renderYears(containerId, yearsData) {
         const container = document.getElementById(containerId);
         if (!container) return;
-
-        container.innerHTML = '';
+        
+        container.innerHTML = ''; 
         const fragment = document.createDocumentFragment();
 
         const card = this.el('div', 'card card-hover year-card');
-
+        
         card.innerHTML = `
             <div class="year-icon">
                 <i data-lucide="archive"></i>
@@ -89,7 +60,7 @@ const Ui = {
                 <i data-lucide="${I18n.currentLang === 'ar' ? 'arrow-left' : 'arrow-right'}"></i>
             </button>
         `;
-
+        
         card.addEventListener('click', () => {
             window.location.href = `materials.html`;
         });
@@ -103,18 +74,21 @@ const Ui = {
     renderNewsSlider(containerId, imagesData) {
         const container = document.getElementById(containerId);
         if (!container) return;
-
-        this._lastSliderImages = imagesData;
-        this.cleanupSlider();
+        
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+        if (this.sliderObserver) {
+            this.sliderObserver.disconnect();
+            this.sliderObserver = null;
+        }
+        this.isAnimating = false;
 
         if (!imagesData || imagesData.length === 0) {
             container.innerHTML = `<p style="text-align:center;color:var(--color-text-muted);width:100%;">${I18n.currentLang === 'ar' ? 'لا توجد تعميمات حالياً' : 'No announcements currently'}</p>`;
             return;
         }
-
-        container.style.direction = 'ltr';
-        container.style.overflow = 'hidden';
-        container.style.touchAction = 'pan-y';
 
         const totalImages = imagesData.length;
         let allImages = [];
@@ -122,36 +96,34 @@ const Ui = {
         if (totalImages === 1) {
             allImages = [imagesData[0]];
         } else {
+            // ⭐️ نكرر الصور 6 مرات لضمان وجود احتياطي كافٍ في جميع الاتجاهات
             allImages = [
-                ...imagesData, ...imagesData, ...imagesData,
+                ...imagesData, ...imagesData, ...imagesData, 
                 ...imagesData, ...imagesData, ...imagesData
             ];
         }
 
-        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}" dir="ltr" style="display:flex;flex-direction:row;align-items:center;width:max-content;direction:ltr;touch-action:pan-y;">`;
+        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}">`;
         allImages.forEach(img => {
-            const safeName = String(img.name || 'image').replace(/'/g, "\\'");
-            const previewUrl = img.previewUrl || img.imageUrl || '';
-            const downloadUrl = img.downloadUrl || (previewUrl ? previewUrl.replace('mode=preview', 'mode=download') : '');
+            const safeName = img.name.replace(/'/g, "\\'");
             html += `
-                <div class="news-slide" data-url="${previewUrl}" data-download="${downloadUrl}" data-name="${safeName}" style="flex-shrink:0;touch-action:pan-y;">
-                    <img src="${img.imageUrl}" alt="${safeName}" loading="eager" decoding="async" onerror="this.style.opacity='0';">
+                <div class="news-slide" data-url="${img.previewUrl}" data-name="${safeName}">
+                    <img src="${img.imageUrl}" alt="${safeName}" loading="lazy" decoding="async" onerror="this.style.opacity='0';">
                 </div>
             `;
         });
         html += `</div>`;
-
+        
         container.innerHTML = html;
 
         const slider = container.querySelector('.news-slider');
         const slides = slider.querySelectorAll('.news-slide');
 
         if (totalImages === 1) {
-            slider.style.width = '100%';
             slider.style.justifyContent = 'center';
             slider.style.pointerEvents = 'auto';
         } else {
-            this.init3DSlider(container, totalImages);
+            this.init3DSlider(container, totalImages, allImages.length);
         }
 
         slides.forEach(slide => {
@@ -161,7 +133,7 @@ const Ui = {
             slide.addEventListener('pointerdown', (e) => {
                 pointerStartX = e.clientX;
                 pointerStartY = e.clientY;
-            }, { passive: true });
+            });
 
             slide.addEventListener('click', (e) => {
                 const distX = Math.abs(e.clientX - pointerStartX);
@@ -169,148 +141,92 @@ const Ui = {
 
                 if (distX < 5 && distY < 5) {
                     const url = slide.getAttribute('data-url');
-                    const downloadUrl = slide.getAttribute('data-download');
                     const name = slide.getAttribute('data-name');
-
+                    
                     if (typeof PreviewManager !== 'undefined') {
-                        PreviewManager.open(url, downloadUrl, name, 'photo', name);
+                        PreviewManager.open(url, name, 'photo', name);
                     }
                 }
             });
         });
     },
 
-    init3DSlider(container, totalImages) {
+    init3DSlider(container, totalImages, totalSlides) {
         const slider = container.querySelector('.news-slider');
         if (!slider) return;
 
         const slides = slider.querySelectorAll('.news-slide');
         if (slides.length === 0) return;
 
-        const getStepWidth = () => {
-            const firstSlide = slides[0];
-            const rect = firstSlide.getBoundingClientRect();
-            const slideWidth = rect.width || firstSlide.offsetWidth || 260;
-            const gap = parseFloat(window.getComputedStyle(slider).gap) || 0;
-            return slideWidth + gap;
-        };
+        const isRTL = document.documentElement.dir === 'rtl';
+        
+        // ⭐️ حساب عرض المجموعة الواحدة ديناميكياً لضمان الدقة مهما تغير حجم الشاشة
+        const slideWidth = slides[0].offsetWidth;
+        const gap = parseInt(window.getComputedStyle(slider).gap) || 0;
+        const setWidth = (slideWidth + gap) * totalImages;
 
-        let stepWidth = getStepWidth();
-        let setWidth = stepWidth * totalImages;
-        let isPointerActive = false;
         let isDragging = false;
-        let hasDecided = false;
         let startX = 0;
-        let startY = 0;
-        let dragOffsetX = 0;
-        const autoScrollSpeed = 0.5;
+        let autoScrollSpeed = 0.5; 
+        
+        // البداية دائماً من المجموعة الثالثة (المنتصف) لضمان وجود صور على اليمين واليسار
         let baseTranslate = -2 * setWidth;
 
-        const syncDimensions = () => {
-            const prevSetWidth = setWidth || 1;
-            const ratio = baseTranslate / prevSetWidth;
-            stepWidth = getStepWidth();
-            setWidth = stepWidth * totalImages;
-            baseTranslate = ratio * setWidth;
-        };
-
-        this.sliderResizeHandler = syncDimensions;
-        window.addEventListener('resize', this.sliderResizeHandler);
-
         slider.addEventListener('pointerdown', (e) => {
-            if (e.button !== 0 && e.pointerType === 'mouse') return;
-            isPointerActive = true;
-            isDragging = false;
-            hasDecided = false;
-            startX = e.clientX;
-            startY = e.clientY;
-            dragOffsetX = e.clientX - baseTranslate;
-        }, { passive: true });
+            isDragging = true;
+            startX = e.clientX - baseTranslate;
+            slider.style.cursor = 'grabbing';
+        });
 
-        this.sliderPointerMoveHandler = (e) => {
-            if (!isPointerActive) return;
+        window.addEventListener('pointermove', (e) => {
+            if (!isDragging) return;
+            baseTranslate = e.clientX - startX;
+        });
 
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-
-            if (!hasDecided) {
-                if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-                hasDecided = true;
-
-                // إذا كانت الحركة عمودية، نطلق السحب فوراً لكي يمرر الهاتف الصفحة بسلاسة
-                if (Math.abs(dy) > Math.abs(dx)) {
-                    isPointerActive = false;
-                    isDragging = false;
-                    return;
-                }
-
-                isDragging = true;
-                dragOffsetX = e.clientX - baseTranslate;
-                slider.style.cursor = 'grabbing';
-            }
-
-            if (isDragging) {
-                baseTranslate = e.clientX - dragOffsetX;
-            }
-        };
-        window.addEventListener('pointermove', this.sliderPointerMoveHandler, { passive: true });
-
-        this.sliderPointerUpHandler = () => {
-            isPointerActive = false;
-            hasDecided = false;
+        window.addEventListener('pointerup', () => {
             if (isDragging) {
                 isDragging = false;
                 slider.style.cursor = 'grab';
             }
-        };
-        window.addEventListener('pointerup', this.sliderPointerUpHandler, { passive: true });
-        window.addEventListener('pointercancel', this.sliderPointerUpHandler, { passive: true });
+        });
 
         slider.addEventListener('dragstart', (e) => e.preventDefault());
         slider.style.cursor = 'grab';
-        slides.forEach(slide => {
-            slide.style.transition = 'none';
-            slide.style.transformOrigin = 'center center';
-        });
+        slides.forEach(slide => slide.style.transition = 'none');
 
         const updateAnimation = () => {
-            if (!setWidth || setWidth <= 0) {
-                stepWidth = getStepWidth();
-                setWidth = stepWidth * totalImages;
+            if (!isDragging) {
+                if (isRTL) baseTranslate += autoScrollSpeed;
+                else baseTranslate -= autoScrollSpeed;
             }
 
-            if (!isDragging && setWidth > 0) {
-                baseTranslate -= autoScrollSpeed;
+            // ⭐️ الحل النهائي للالتفاف اللانهائي (يمنع الفراغ في كل الاتجاهات)
+            // نستخدم while لضمان إعادة التموضع فوراً حتى لو سحب المستخدم بسرعة جنونية
+            while (baseTranslate > -1 * setWidth) {
+                baseTranslate -= setWidth;
             }
-
-            if (setWidth > 0) {
-                while (baseTranslate > -1 * setWidth) {
-                    baseTranslate -= setWidth;
-                }
-                while (baseTranslate < -4 * setWidth) {
-                    baseTranslate += setWidth;
-                }
+            while (baseTranslate < -4 * setWidth) {
+                baseTranslate += setWidth;
             }
 
             slider.style.transform = `translate3d(${baseTranslate}px, 0, 0)`;
 
+            // حساب تأثير 3D
             const containerRect = container.getBoundingClientRect();
             const containerCenter = containerRect.left + containerRect.width / 2;
-            const maxDistance = Math.max(containerRect.width / 2, 1);
+            const maxDistance = containerRect.width / 2;
 
-            slides.forEach((slide, index) => {
-                const slideRect = slide.getBoundingClientRect();
-                const slideCenter = slideRect.width
-                    ? (slideRect.left + slideRect.width / 2)
-                    : (containerRect.left + baseTranslate + index * stepWidth + stepWidth / 2);
-
+            slides.forEach(slide => {
+                const rect = slide.getBoundingClientRect();
+                const slideCenter = rect.left + rect.width / 2;
                 const distance = slideCenter - containerCenter;
-                let factor = Math.abs(distance) / maxDistance;
+                
+                let factor = maxDistance > 0 ? Math.abs(distance) / maxDistance : 0;
                 if (factor > 1) factor = 1;
 
-                const opacity = Math.max(0.3, 1 - (factor * 0.7));
+                const opacity = 1 - (factor * 0.7);
                 const scale = 1 - (factor * 0.15);
-                const rotateDir = distance > 0 ? 1 : -1;
+                const rotateDir = distance > 0 ? 1 : -1; 
                 const rotateY = rotateDir * (factor * 35);
 
                 slide.style.opacity = opacity;
@@ -326,7 +242,6 @@ const Ui = {
         this.sliderObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    syncDimensions();
                     if (!Ui.isAnimating) {
                         Ui.isAnimating = true;
                         Ui.animationFrameId = requestAnimationFrame(updateAnimation);
@@ -339,7 +254,7 @@ const Ui = {
                     }
                 }
             });
-        }, { threshold: 0.05 });
+        }, { threshold: 0.1 });
 
         this.sliderObserver.observe(container);
     },
@@ -347,7 +262,7 @@ const Ui = {
     renderNews(containerId, newsData) {
         const container = document.getElementById(containerId);
         if (!container) return;
-
+        
         container.innerHTML = '';
 
         if (!newsData || newsData.length === 0) {
@@ -360,7 +275,7 @@ const Ui = {
 
         topNews.forEach(news => {
             const isPinned = news.pinned ? `<span class="badge badge-gold"><i data-lucide="pin" style="width:12px;height:12px;"></i> ${I18n.t('common.pinned')}</span>` : '';
-
+            
             const card = this.el('div', 'card card-hover');
             card.innerHTML = `
                 <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
@@ -386,11 +301,4 @@ const Ui = {
 
 document.addEventListener('DOMContentLoaded', () => {
     Ui.initMobileMenu();
-});
-
-window.addEventListener('languageChanged', () => {
-    const sliderContainer = document.querySelector('.news-slider')?.parentElement;
-    if (sliderContainer && sliderContainer.id && Array.isArray(Ui._lastSliderImages)) {
-        Ui.renderNewsSlider(sliderContainer.id, Ui._lastSliderImages);
-    }
 });

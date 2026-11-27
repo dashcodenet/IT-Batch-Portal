@@ -10,7 +10,6 @@ const Ui = {
     sliderPointerMoveHandler: null,
     sliderPointerUpHandler: null,
     _lastSliderImages: null,
-    _lastSliderContainerId: null,
 
     el(tag, className = '', innerHTML = '') {
         const element = document.createElement(tag);
@@ -104,7 +103,6 @@ const Ui = {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        this._lastSliderContainerId = containerId;
         this._lastSliderImages = imagesData;
         this.cleanupSlider();
 
@@ -114,7 +112,6 @@ const Ui = {
         }
 
         container.style.direction = 'ltr';
-        container.style.width = '100%';
         container.style.overflow = 'hidden';
 
         const totalImages = imagesData.length;
@@ -152,9 +149,7 @@ const Ui = {
             slider.style.justifyContent = 'center';
             slider.style.pointerEvents = 'auto';
         } else {
-            requestAnimationFrame(() => {
-                this.init3DSlider(container, totalImages);
-            });
+            this.init3DSlider(container, totalImages);
         }
 
         slides.forEach(slide => {
@@ -193,9 +188,8 @@ const Ui = {
         const getStepWidth = () => {
             const firstSlide = slides[0];
             const rect = firstSlide.getBoundingClientRect();
-            const slideWidth = rect.width || firstSlide.offsetWidth || 320;
-            const computedStyle = window.getComputedStyle(slider);
-            const gap = parseFloat(computedStyle.gap) || parseFloat(computedStyle.columnGap) || 16;
+            const slideWidth = rect.width || firstSlide.offsetWidth || 260;
+            const gap = parseFloat(window.getComputedStyle(slider).gap) || 0;
             return slideWidth + gap;
         };
 
@@ -248,9 +242,6 @@ const Ui = {
             if (!setWidth || setWidth <= 0) {
                 stepWidth = getStepWidth();
                 setWidth = stepWidth * totalImages;
-                if (setWidth > 0 && baseTranslate === 0) {
-                    baseTranslate = -2 * setWidth;
-                }
             }
 
             if (!isDragging && setWidth > 0) {
@@ -269,19 +260,16 @@ const Ui = {
             slider.style.transform = `translate3d(${baseTranslate}px, 0, 0)`;
 
             const containerRect = container.getBoundingClientRect();
-            const referenceWidth = containerRect.width > 100 ? containerRect.width : window.innerWidth;
-            const referenceCenter = containerRect.width > 100
-                ? (containerRect.left + containerRect.width / 2)
-                : (window.innerWidth / 2);
-            const maxDistance = Math.max(referenceWidth / 2, 1);
+            const containerCenter = containerRect.left + containerRect.width / 2;
+            const maxDistance = Math.max(containerRect.width / 2, 1);
 
             slides.forEach((slide, index) => {
                 const slideRect = slide.getBoundingClientRect();
-                const slideCenter = slideRect.width > 0
+                const slideCenter = slideRect.width
                     ? (slideRect.left + slideRect.width / 2)
-                    : (referenceCenter - referenceWidth / 2 + baseTranslate + index * stepWidth + stepWidth / 2);
+                    : (containerRect.left + baseTranslate + index * stepWidth + stepWidth / 2);
 
-                const distance = slideCenter - referenceCenter;
+                const distance = slideCenter - containerCenter;
                 let factor = Math.abs(distance) / maxDistance;
                 if (factor > 1) factor = 1;
 
@@ -366,9 +354,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('languageChanged', () => {
-    if (Ui._lastSliderContainerId && Array.isArray(Ui._lastSliderImages)) {
-        requestAnimationFrame(() => {
-            Ui.renderNewsSlider(Ui._lastSliderContainerId, Ui._lastSliderImages);
-        });
+    const sliderContainer = document.querySelector('.news-slider')?.parentElement;
+    if (sliderContainer && sliderContainer.id && Array.isArray(Ui._lastSliderImages)) {
+        Ui.renderNewsSlider(sliderContainer.id, Ui._lastSliderImages);
     }
 });

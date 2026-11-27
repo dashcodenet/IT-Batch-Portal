@@ -1,9 +1,9 @@
 /**
  * Ui.js - DOM Manipulation and Component Rendering (Optimized)
- * ⭐️ النسخة النهائية: حل جذري لمشكلة الفراغات والالتفاف اللانهائي (RTL & LTR)
+ * النسخة النهائية: حل جذري لمشكلة الفراغات والالتفاف اللانهائي (RTL & LTR)
  */
 const Ui = {
-    animationFrameId: null, 
+    animationFrameId: null,
     isAnimating: false,
     sliderObserver: null,
 
@@ -41,12 +41,12 @@ const Ui = {
     renderYears(containerId, yearsData) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        
-        container.innerHTML = ''; 
+
+        container.innerHTML = '';
         const fragment = document.createDocumentFragment();
 
         const card = this.el('div', 'card card-hover year-card');
-        
+
         card.innerHTML = `
             <div class="year-icon">
                 <i data-lucide="archive"></i>
@@ -60,7 +60,7 @@ const Ui = {
                 <i data-lucide="${I18n.currentLang === 'ar' ? 'arrow-left' : 'arrow-right'}"></i>
             </button>
         `;
-        
+
         card.addEventListener('click', () => {
             window.location.href = `materials.html`;
         });
@@ -74,7 +74,7 @@ const Ui = {
     renderNewsSlider(containerId, imagesData) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        
+
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
@@ -96,24 +96,25 @@ const Ui = {
         if (totalImages === 1) {
             allImages = [imagesData[0]];
         } else {
-            // ⭐️ نكرر الصور 6 مرات لضمان وجود احتياطي كافٍ في جميع الاتجاهات
             allImages = [
-                ...imagesData, ...imagesData, ...imagesData, 
+                ...imagesData, ...imagesData, ...imagesData,
                 ...imagesData, ...imagesData, ...imagesData
             ];
         }
 
-        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}">`;
+        let html = `<div class="news-slider ${totalImages === 1 ? 'single-slide' : ''}" dir="ltr">`;
         allImages.forEach(img => {
-            const safeName = img.name.replace(/'/g, "\\'");
+            const safeName = String(img.name || 'image').replace(/'/g, "\\'");
+            const previewUrl = img.previewUrl || img.imageUrl || '';
+            const downloadUrl = img.downloadUrl || (previewUrl ? previewUrl.replace('mode=preview', 'mode=download') : '');
             html += `
-                <div class="news-slide" data-url="${img.previewUrl}" data-name="${safeName}">
-                    <img src="${img.imageUrl}" alt="${safeName}" loading="lazy" decoding="async" onerror="this.style.opacity='0';">
+                <div class="news-slide" data-url="${previewUrl}" data-download="${downloadUrl}" data-name="${safeName}">
+                    <img src="${img.imageUrl}" alt="${safeName}" loading="eager" decoding="async" onerror="this.style.opacity='0';">
                 </div>
             `;
         });
         html += `</div>`;
-        
+
         container.innerHTML = html;
 
         const slider = container.querySelector('.news-slider');
@@ -141,10 +142,11 @@ const Ui = {
 
                 if (distX < 5 && distY < 5) {
                     const url = slide.getAttribute('data-url');
+                    const downloadUrl = slide.getAttribute('data-download');
                     const name = slide.getAttribute('data-name');
-                    
+
                     if (typeof PreviewManager !== 'undefined') {
-                        PreviewManager.open(url, name, 'photo', name);
+                        PreviewManager.open(url, downloadUrl, name, 'photo', name);
                     }
                 }
             });
@@ -158,19 +160,27 @@ const Ui = {
         const slides = slider.querySelectorAll('.news-slide');
         if (slides.length === 0) return;
 
-        const isRTL = document.documentElement.dir === 'rtl';
-        
-        // ⭐️ حساب عرض المجموعة الواحدة ديناميكياً لضمان الدقة مهما تغير حجم الشاشة
-        const slideWidth = slides[0].offsetWidth;
-        const gap = parseInt(window.getComputedStyle(slider).gap) || 0;
-        const setWidth = (slideWidth + gap) * totalImages;
+        const getSetWidth = () => {
+            const firstSlide = slides[0];
+            const rect = firstSlide.getBoundingClientRect();
+            const slideWidth = rect.width || firstSlide.offsetWidth || 260;
+            const gap = parseFloat(window.getComputedStyle(slider).gap) || 0;
+            return (slideWidth + gap) * totalImages;
+        };
 
+        let setWidth = getSetWidth();
         let isDragging = false;
         let startX = 0;
-        let autoScrollSpeed = 0.5; 
-        
-        // البداية دائماً من المجموعة الثالثة (المنتصف) لضمان وجود صور على اليمين واليسار
+        const autoScrollSpeed = 0.5;
         let baseTranslate = -2 * setWidth;
+
+        const onResize = () => {
+            const prevSetWidth = setWidth || 1;
+            const ratio = baseTranslate / prevSetWidth;
+            setWidth = getSetWidth();
+            baseTranslate = ratio * setWidth;
+        };
+        window.addEventListener('resize', onResize);
 
         slider.addEventListener('pointerdown', (e) => {
             isDragging = true;
@@ -192,26 +202,29 @@ const Ui = {
 
         slider.addEventListener('dragstart', (e) => e.preventDefault());
         slider.style.cursor = 'grab';
-        slides.forEach(slide => slide.style.transition = 'none');
+        slides.forEach(slide => {
+            slide.style.transition = 'none';
+        });
 
         const updateAnimation = () => {
-            if (!isDragging) {
-                if (isRTL) baseTranslate += autoScrollSpeed;
-                else baseTranslate -= autoScrollSpeed;
+            if (!setWidth) setWidth = getSetWidth();
+
+            if (!isDragging && setWidth > 0) {
+                const isRTL = document.documentElement.dir === 'rtl' || document.body.dir === 'rtl';
+                baseTranslate += isRTL ? autoScrollSpeed : -autoScrollSpeed;
             }
 
-            // ⭐️ الحل النهائي للالتفاف اللانهائي (يمنع الفراغ في كل الاتجاهات)
-            // نستخدم while لضمان إعادة التموضع فوراً حتى لو سحب المستخدم بسرعة جنونية
-            while (baseTranslate > -1 * setWidth) {
-                baseTranslate -= setWidth;
-            }
-            while (baseTranslate < -4 * setWidth) {
-                baseTranslate += setWidth;
+            if (setWidth > 0) {
+                while (baseTranslate > -1 * setWidth) {
+                    baseTranslate -= setWidth;
+                }
+                while (baseTranslate < -4 * setWidth) {
+                    baseTranslate += setWidth;
+                }
             }
 
             slider.style.transform = `translate3d(${baseTranslate}px, 0, 0)`;
 
-            // حساب تأثير 3D
             const containerRect = container.getBoundingClientRect();
             const containerCenter = containerRect.left + containerRect.width / 2;
             const maxDistance = containerRect.width / 2;
@@ -220,13 +233,13 @@ const Ui = {
                 const rect = slide.getBoundingClientRect();
                 const slideCenter = rect.left + rect.width / 2;
                 const distance = slideCenter - containerCenter;
-                
+
                 let factor = maxDistance > 0 ? Math.abs(distance) / maxDistance : 0;
                 if (factor > 1) factor = 1;
 
                 const opacity = 1 - (factor * 0.7);
                 const scale = 1 - (factor * 0.15);
-                const rotateDir = distance > 0 ? 1 : -1; 
+                const rotateDir = distance > 0 ? 1 : -1;
                 const rotateY = rotateDir * (factor * 35);
 
                 slide.style.opacity = opacity;
@@ -242,6 +255,7 @@ const Ui = {
         this.sliderObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
+                    setWidth = getSetWidth();
                     if (!Ui.isAnimating) {
                         Ui.isAnimating = true;
                         Ui.animationFrameId = requestAnimationFrame(updateAnimation);
@@ -262,7 +276,7 @@ const Ui = {
     renderNews(containerId, newsData) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        
+
         container.innerHTML = '';
 
         if (!newsData || newsData.length === 0) {
@@ -275,7 +289,7 @@ const Ui = {
 
         topNews.forEach(news => {
             const isPinned = news.pinned ? `<span class="badge badge-gold"><i data-lucide="pin" style="width:12px;height:12px;"></i> ${I18n.t('common.pinned')}</span>` : '';
-            
+
             const card = this.el('div', 'card card-hover');
             card.innerHTML = `
                 <div style="display:flex;justify-content:space-between;margin-bottom:12px;">

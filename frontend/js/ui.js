@@ -1,6 +1,6 @@
 /**
  * Ui.js - DOM Manipulation and Component Rendering (Optimized)
- * النسخة النهائية: تطابق كامل بين العربية والإنجليزية + عدم إعادة تحميل الصور عند تبديل اللغة + تمرير سلس
+ * النسخة النهائية: تطابق كامل بين العربية والإنجليزية + تمرير لمس سلس في الهاتف
  */
 const Ui = {
     animationFrameId: null,
@@ -9,7 +9,6 @@ const Ui = {
     sliderResizeHandler: null,
     sliderPointerMoveHandler: null,
     sliderPointerUpHandler: null,
-    sliderSyncHandler: null,
     _lastSliderImages: null,
 
     el(tag, className = '', innerHTML = '') {
@@ -65,10 +64,6 @@ const Ui = {
             window.removeEventListener('pointercancel', this.sliderPointerUpHandler);
             this.sliderPointerUpHandler = null;
         }
-        if (this.sliderSyncHandler) {
-            window.removeEventListener('languageChanged', this.sliderSyncHandler);
-            this.sliderSyncHandler = null;
-        }
         this.isAnimating = false;
     },
 
@@ -108,17 +103,6 @@ const Ui = {
     renderNewsSlider(containerId, imagesData) {
         const container = document.getElementById(containerId);
         if (!container) return;
-
-        const isSameData =
-            Array.isArray(this._lastSliderImages) &&
-            Array.isArray(imagesData) &&
-            this._lastSliderImages.length === imagesData.length &&
-            this._lastSliderImages.every((item, idx) => item.imageUrl === imagesData[idx].imageUrl);
-
-        // إذا كانت الصور نفسها وموجودة مسبقاً في السلايدر، لا نعيد بناءها ولا نعيد تحميل الصور
-        if (isSameData && container.querySelector('.news-slider')) {
-            return;
-        }
 
         this._lastSliderImages = imagesData;
         this.cleanupSlider();
@@ -233,14 +217,6 @@ const Ui = {
         this.sliderResizeHandler = syncDimensions;
         window.addEventListener('resize', this.sliderResizeHandler);
 
-        // عند تغيير اللغة، نحدّث الأبعاد فقط دون إعادة تحميل الصور
-        this.sliderSyncHandler = () => {
-            container.style.direction = 'ltr';
-            slider.style.direction = 'ltr';
-            requestAnimationFrame(syncDimensions);
-        };
-        window.addEventListener('languageChanged', this.sliderSyncHandler);
-
         slider.addEventListener('pointerdown', (e) => {
             if (e.button !== 0 && e.pointerType === 'mouse') return;
             isPointerActive = true;
@@ -261,6 +237,7 @@ const Ui = {
                 if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
                 hasDecided = true;
 
+                // إذا كانت الحركة عمودية، نطلق السحب فوراً لكي يمرر الهاتف الصفحة بسلاسة
                 if (Math.abs(dy) > Math.abs(dx)) {
                     isPointerActive = false;
                     isDragging = false;
@@ -409,4 +386,11 @@ const Ui = {
 
 document.addEventListener('DOMContentLoaded', () => {
     Ui.initMobileMenu();
+});
+
+window.addEventListener('languageChanged', () => {
+    const sliderContainer = document.querySelector('.news-slider')?.parentElement;
+    if (sliderContainer && sliderContainer.id && Array.isArray(Ui._lastSliderImages)) {
+        Ui.renderNewsSlider(sliderContainer.id, Ui._lastSliderImages);
+    }
 });
